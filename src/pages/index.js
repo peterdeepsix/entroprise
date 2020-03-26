@@ -1,13 +1,25 @@
 import React from "react"
+import Loadable from "@loadable/component"
+import SEOComponent from "src/components/SEOComponent/SEOComponent"
+import IndefiniteLoading from "src/components/Loading/IndefiniteLoading"
 
-import Layout from "../components/layout"
-import SEO from "../components/seo"
+const InterfaceLayout = Loadable(() => import("src/layouts/InterfaceLayout"), {
+  fallback: <IndefiniteLoading message="InterfaceLayout" />,
+})
 
-const IndexPage = () => (
-  <Layout>
-    <SEO title="Home" />
-    <h1>Entroprise</h1>
-  </Layout>
+const IndexComponent = Loadable(
+  () => import("src/components/IndexComponent/IndexComponent"),
+  {
+    fallback: <IndefiniteLoading message="IndexComponent" />,
+  }
 )
 
+const IndexPage = ({ location, siteData }) => {
+  return (
+    <InterfaceLayout location={location}>
+      <SEOComponent title="Entroprise" />
+      <IndexComponent />
+    </InterfaceLayout>
+  )
+}
 export default IndexPage
