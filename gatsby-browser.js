@@ -9,4 +9,6 @@ import "firebase/storage"
 
 import RootProvider from "src/providers/RootProvider"
 
+require("typeface-muli")
+
 export const wrapRootElement = RootProvider

@@ -2,7 +2,7 @@ import React from "react"
 
 import Loadable from "@loadable/component"
 
-import IndefiniteLoading from "src/components/loading/indefiniteLoading"
+import IndefiniteLoading from "src/components/Loading/IndefiniteLoading"
 
 const InterfaceLayoutComponent = Loadable(
   () => import("src/components/InterfaceLayout/InterfaceLayoutComponent"),

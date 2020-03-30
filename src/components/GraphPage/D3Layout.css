@@ -1,0 +1,10 @@
+.myLayout {
+  display: grid;
+  height: 100vh;
+  grid: 50px 1fr 1fr 50px / 50px 1fr 1fr 50px;
+  font-size: calc(10px + 2vmin);
+}
+
+.coolThing {
+  grid-area: 2/2/4/4;
+}

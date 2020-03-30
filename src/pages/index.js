@@ -1,5 +1,6 @@
 import React from "react"
 import Loadable from "@loadable/component"
+
 import SEOComponent from "src/components/SEOComponent/SEOComponent"
 import IndefiniteLoading from "src/components/Loading/IndefiniteLoading"
 
@@ -14,10 +15,10 @@ const IndexComponent = Loadable(
   }
 )
 
-const IndexPage = ({ location, siteData }) => {
+const IndexPage = ({ location }) => {
   return (
     <InterfaceLayout location={location}>
-      <SEOComponent title="Entroprise" />
+      <SEOComponent title="Index" />
       <IndexComponent />
     </InterfaceLayout>
   )

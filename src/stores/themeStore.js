@@ -13,10 +13,10 @@ class ThemeStore {
         main: "#219a49",
       },
       secondary: {
-        main: "#219a49",
+        main: "#246EB9",
       },
       error: {
-        main: "#219a49",
+        main: "#F06543",
       },
     },
     typography: {

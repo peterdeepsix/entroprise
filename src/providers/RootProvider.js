@@ -4,16 +4,22 @@ import Loadable from "@loadable/component"
 
 import Store from "src/stores/rootStore"
 
-import IndefiniteLoading from "src/components/loading/indefiniteLoading"
+import IndefiniteLoading from "src/components/Loading/IndefiniteLoading"
 
 const ThemeLayout = Loadable(() => import("src/layouts/ThemeLayout"), {
   fallback: <IndefiniteLoading message="ThemeLayout" />,
 })
 
+const AuthLayout = Loadable(() => import("src/layouts/AuthLayout"), {
+  fallback: <IndefiniteLoading message="AuthLayout" />,
+})
+
 const RootProvider = ({ element }) => {
   return (
     <Provider store={Store}>
-      <ThemeLayout>{element}</ThemeLayout>
+      <AuthLayout>
+        <ThemeLayout>{element}</ThemeLayout>
+      </AuthLayout>
     </Provider>
   )
 }

@@ -1,13 +1,17 @@
 import React, { useEffect } from "react"
-import { makeStyles } from "@material-ui/core/styles"
-import BottomNavigation from "@material-ui/core/BottomNavigation"
-import BottomNavigationAction from "@material-ui/core/BottomNavigationAction"
-import AppBar from "@material-ui/core/AppBar"
-import { TiThListOutline } from "react-icons/ti"
-import { AiOutlineRadarChart } from "react-icons/ai"
-import { FiMapPin } from "react-icons/fi"
+import { navigate } from "gatsby"
 
-import LinkComponent from "src/components/LinkComponent/LinkComponent"
+import { makeStyles } from "@material-ui/core/styles"
+
+import {
+  AppBar,
+  BottomNavigation,
+  BottomNavigationAction,
+} from "@material-ui/core"
+
+import { GiBubblingFlask } from "react-icons/gi"
+import { AiOutlineRadarChart } from "react-icons/ai"
+import { GiFamilyTree } from "react-icons/gi"
 
 const useStyles = makeStyles({
   stickToBottom: {
@@ -25,6 +29,11 @@ const LowerNavigation = ({ location }) => {
     if (location) setValue(location.pathname)
   }, [location])
 
+  const handleChange = (event, newValue) => {
+    setValue(newValue)
+    navigate(newValue)
+  }
+
   return (
     <AppBar
       position="fixed"
@@ -34,38 +43,19 @@ const LowerNavigation = ({ location }) => {
     >
       <BottomNavigation
         value={value}
-        aria-label="BottomNavigation label"
+        aria-label="BottomNavigation"
         showLabels
+        onChange={handleChange}
       >
         <BottomNavigationAction
-          to="/"
-          component={LinkComponent}
-          fade
-          duration={0.5}
-          bg="#fff"
-          value="/"
-          label="List"
-          icon={<TiThListOutline />}
+          value="/app"
+          label="Application"
+          icon={<GiBubblingFlask />}
         />
         <BottomNavigationAction
-          to="/"
-          component={LinkComponent}
-          cover
-          duration={0.5}
-          bg="#fff"
-          value="/graph"
-          label="Graph"
-          icon={<AiOutlineRadarChart />}
-        />
-        <BottomNavigationAction
-          to="/"
-          component={LinkComponent}
-          paintDrip
-          duration={0.5}
-          hex="#fff"
-          value="/map"
-          label="Map"
-          icon={<FiMapPin />}
+          value="/app/tree"
+          label="Tree Graph"
+          icon={<GiFamilyTree />}
         />
       </BottomNavigation>
     </AppBar>

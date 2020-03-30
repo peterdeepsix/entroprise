@@ -1,3 +1,7 @@
+require("dotenv").config({
+  path: `.env.${process.env.NODE_ENV}`,
+})
+
 module.exports = {
   siteMetadata: {
     title: `Entroprise`,
@@ -10,11 +14,33 @@ module.exports = {
     `gatsby-transformer-sharp`,
     `gatsby-plugin-sharp`,
     {
-      resolve: `gatsby-plugin-google-fonts`,
+      resolve: "gatsby-plugin-firebase",
       options: {
-        fonts: [`muli`],
-        display: "swap",
+        features: {
+          auth: true,
+          database: true,
+          firestore: true,
+          storage: true,
+          messaging: true,
+          functions: true,
+          performance: true,
+          analytics: true,
+        },
+        credentials: {
+          apiKey: process.env._F_APIKEY,
+          authDomain: process.env._F_AUTHDOMAIN,
+          databaseURL: process.env._F_DATABASEURL,
+          projectId: process.env._F_PROJECTID,
+          storageBucket: process.env._F_STORAGEBUCKET,
+          messagingSenderId: process.env._F_MESSAGINGSENDERID,
+          appId: process.env._F_APPID,
+          measurementId: process.env._F_MEASUREMENTID,
+        },
       },
+    },
+    {
+      resolve: `gatsby-plugin-offline`,
+      options: {},
     },
     {
       resolve: `gatsby-plugin-create-client-paths`,
@@ -22,9 +48,7 @@ module.exports = {
     },
     {
       resolve: "gatsby-plugin-transition-link",
-      options: {
-        // layout: require.resolve(`./src/layouts/InterfaceLayout`),
-      },
+      options: {},
     },
     {
       resolve: `gatsby-source-filesystem`,

@@ -98,7 +98,12 @@ const UpperNavigation = ({ props }) => {
       <Scroll {...props}>
         <AppBar className={classes.appBar} positon="sticky" color="inherit">
           <Toolbar className={classes.toolbar}>
-            <IconButton edge="start" color="inherit" onClick={handleClick}>
+            <IconButton
+              edge="start"
+              color="inherit"
+              aria-label="search"
+              onClick={handleClick}
+            >
               <SearchOutlinedIcon />
             </IconButton>
             <div className={classes.grow} />
@@ -115,7 +120,8 @@ const UpperNavigation = ({ props }) => {
             <div className={classes.grow} />
             <IconButton
               component={LinkComponent}
-              to="/"
+              to="/app/account"
+              aria-label="delete"
               edge="end"
               color="inherit"
             >

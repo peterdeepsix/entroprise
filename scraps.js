@@ -26,7 +26,7 @@ console.log(`LOCATION - PATHNAME - ${location.pathname}`)
 
 // Loadable
 import Loadable from "@loadable/component"
-import IndefiniteLoading from "src/components/loading/indefiniteLoading"
+import IndefiniteLoading from "src/components/Loading/IndefiniteLoading"
 
 const InterfaceLayout = Loadable(() => import("src/layouts/InterfaceLayout"), {
   fallback: <IndefiniteLoading message="InterfaceLayout" />,
@@ -36,6 +36,9 @@ const InterfaceLayout = Loadable(() => import("src/layouts/InterfaceLayout"), {
 useEffect(() => {
   document.title = `You clicked ${count} times`
 }, [count])
+
+// Use ref hook
+const treeRef = useRef(null)
 
 // State hook
 const [count, setCount] = useState(0)

@@ -1,12 +1,12 @@
-import React, { useContext, useMemo } from "react"
-import { inject } from "mobx-react"
+import React, { useMemo } from "react"
+import { inject, observer } from "mobx-react"
 
 import Loadable from "@loadable/component"
 
 import { createMuiTheme } from "@material-ui/core/styles"
 import useMediaQuery from "@material-ui/core/useMediaQuery"
 
-import IndefiniteLoading from "../components/loading/indefiniteLoading"
+import IndefiniteLoading from "src/components/Loading/IndefiniteLoading"
 
 const ThemeLayoutComponent = Loadable(
   () => import("src/components/ThemeLayout/ThemeLayoutComponent"),
@@ -29,16 +29,16 @@ const ThemeLayout = ({ children, store }) => {
 
   useMemo(() => {
     themeStore.setPrefersDarkMode(prefersDarkMode)
-  }, [prefersDarkMode])
+  }, [prefersDarkMode, themeStore])
 
   useMemo(() => {
     const muiThemeObject = createMuiTheme(themeObject)
 
     themeStore.setThemeObject(themeObject)
     themeStore.setMuiThemeObject(muiThemeObject)
-  }, [themeStore.themeObject])
+  }, [themeObject, themeStore])
 
   return <ThemeLayoutComponent>{children}</ThemeLayoutComponent>
 }
 
-export default inject("store")(ThemeLayout)
+export default inject("store")(observer(ThemeLayout))
