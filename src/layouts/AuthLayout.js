@@ -1,5 +1,4 @@
 import React, { useMemo } from "react"
-import { Observer } from "mobx-react"
 import firebase from "gatsby-plugin-firebase"
 
 import Loadable from "@loadable/component"
@@ -26,11 +25,7 @@ const AuthLayout = ({ children }) => {
       })
   }, [])
 
-  return (
-    <Observer>
-      {() => <AuthLayoutComponent>{children}</AuthLayoutComponent>}
-    </Observer>
-  )
+  return <AuthLayoutComponent>{children}</AuthLayoutComponent>
 }
 
 export default AuthLayout

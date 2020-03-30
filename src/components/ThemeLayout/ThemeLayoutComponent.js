@@ -1,14 +1,10 @@
 import React from "react"
-import { inject, observer } from "mobx-react"
 import { Helmet } from "react-helmet"
 
 import CssBaseline from "@material-ui/core/CssBaseline"
 import { ThemeProvider } from "@material-ui/core/styles"
 
-const ThemeLayoutComponent = ({ store, children }) => {
-  const { themeStore } = store
-  const { muiThemeObject } = themeStore
-
+const ThemeLayoutComponent = ({ children }) => {
   return (
     <>
       <Helmet>
@@ -17,7 +13,7 @@ const ThemeLayoutComponent = ({ store, children }) => {
           content="minimum-scale=1, initial-scale=1, width=device-width"
         />
       </Helmet>
-      <ThemeProvider theme={muiThemeObject}>
+      <ThemeProvider>
         <CssBaseline />
         {children}
       </ThemeProvider>
@@ -25,4 +21,4 @@ const ThemeLayoutComponent = ({ store, children }) => {
   )
 }
 
-export default inject("store")(observer(ThemeLayoutComponent))
+export default ThemeLayoutComponent
