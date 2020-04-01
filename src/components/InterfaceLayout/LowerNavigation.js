@@ -9,9 +9,8 @@ import {
   BottomNavigationAction,
 } from "@material-ui/core"
 
-import { GiBubblingFlask } from "react-icons/gi"
-import { AiOutlineRadarChart } from "react-icons/ai"
-import { GiFamilyTree } from "react-icons/gi"
+import PeopleAltOutlinedIcon from "@material-ui/icons/PeopleAltOutlined"
+import NaturePeopleOutlinedIcon from "@material-ui/icons/NaturePeopleOutlined"
 
 const useStyles = makeStyles({
   stickToBottom: {
@@ -48,14 +47,14 @@ const LowerNavigation = ({ location }) => {
         onChange={handleChange}
       >
         <BottomNavigationAction
-          value="/app"
-          label="Application"
-          icon={<GiBubblingFlask />}
+          value="/app/users"
+          label="User List"
+          icon={<PeopleAltOutlinedIcon />}
         />
         <BottomNavigationAction
           value="/app/tree"
           label="Tree Graph"
-          icon={<GiFamilyTree />}
+          icon={<NaturePeopleOutlinedIcon />}
         />
       </BottomNavigation>
     </AppBar>

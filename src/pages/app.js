@@ -34,6 +34,10 @@ const AccountPage = Loadable(() => import("src/containers/AccountPage"), {
   fallback: <IndefiniteLoading message="AccountPage" />,
 })
 
+const UsersPage = Loadable(() => import("src/containers/UsersPage"), {
+  fallback: <IndefiniteLoading message="UsersPage" />,
+})
+
 const GraphPageComponent = Loadable(
   () => import("src/components/GraphPage/GraphPageComponent"),
   {
@@ -55,6 +59,7 @@ const IndexPage = ({ location }) => {
       <Router>
         <AppPageComponent path="/app" />
         <SigninPageComponent path="/app/signin" />
+        <UsersPage path="/app/users" />
         <AccountPage path="/app/account" />
         <TreePageComponent path="/app/tree" />
         <GraphPageComponent path="/app/graph" />

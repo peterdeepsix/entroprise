@@ -63,7 +63,7 @@ const useStyles = makeStyles(theme => ({
 const AccountPage = () => {
   const classes = useStyles()
   const [user, loading, error] = useAuthState(firebase.auth())
-  const [isOnline, setIsOnline] = useState(true)
+  const [isOnline, setIsOnline] = useState(false)
 
   useEffect(() => {
     if (user) {
@@ -72,7 +72,9 @@ const AccountPage = () => {
         .ref("/status/" + user.uid)
         .on("value", snapshot => {
           const state = snapshot.val()
-          if (state.state == "online") {
+          console.log("state")
+          console.log(state)
+          if (state == "online") {
             setIsOnline(true)
           } else {
             setIsOnline(false)
