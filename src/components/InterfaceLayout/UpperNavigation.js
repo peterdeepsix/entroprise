@@ -1,4 +1,5 @@
 import React from "react"
+import { navigate } from "gatsby"
 
 import { fade, makeStyles } from "@material-ui/core/styles"
 import {
@@ -108,8 +109,7 @@ const UpperNavigation = ({ props }) => {
             </IconButton>
             <div className={classes.grow} />
             <Typography
-              component={LinkComponent}
-              to="/"
+              onClick={() => navigate("/")}
               className={classes.title}
               variant="h6"
               color="textPrimary"
@@ -119,8 +119,7 @@ const UpperNavigation = ({ props }) => {
             </Typography>
             <div className={classes.grow} />
             <IconButton
-              component={LinkComponent}
-              to="/app/account"
+              onClick={() => navigate("/app/account")}
               aria-label="delete"
               edge="end"
               color="inherit"

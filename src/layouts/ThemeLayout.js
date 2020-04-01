@@ -1,4 +1,4 @@
-import React, { useMemo } from "react"
+import React from "react"
 
 import Loadable from "@loadable/component"
 import IndefiniteLoading from "src/components/Loading/IndefiniteLoading"

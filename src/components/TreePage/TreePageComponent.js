@@ -127,32 +127,23 @@ const TreePageComponent = () => {
 
   return (
     <>
-      <Container maxWidth="lg">
-        <Box mt={2} mb={1}>
-          <Card variant="outlined">
-            <CardHeader title="Tree Graph" />
-            <CardContent>
-              {/* {error && <Typography>Error: {error}</Typography>}
-          {loading && <Typography>List: Loading...</Typography>} */}
-              <div className={classes.root} ref={treeRef}>
-                <Tree
-                  collapsible={false}
-                  allowForeignObjects
-                  data={treeData}
-                  orientation={"vertical"}
-                  nodeLabelComponent={{
-                    render: <TreeChip handleClickOpen={handleClickOpen} />,
-                    foreignObjectWrapper: {
-                      y: -16,
-                      x: -16,
-                      width: "100%",
-                    },
-                  }}
-                />
-              </div>
-            </CardContent>
-          </Card>
-        </Box>
+      <Container disableGutters maxWidth="lg">
+        <div className={classes.root} ref={treeRef}>
+          <Tree
+            collapsible={false}
+            allowForeignObjects
+            data={treeData}
+            orientation={"vertical"}
+            nodeLabelComponent={{
+              render: <TreeChip handleClickOpen={handleClickOpen} />,
+              foreignObjectWrapper: {
+                y: -16,
+                x: -16,
+                width: "100%",
+              },
+            }}
+          />
+        </div>
       </Container>
       <Dialog
         fullScreen

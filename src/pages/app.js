@@ -30,12 +30,9 @@ const SigninPageComponent = Loadable(
   }
 )
 
-const AccountPageComponent = Loadable(
-  () => import("src/components/AccountPage/AccountPageComponent"),
-  {
-    fallback: <IndefiniteLoading message="AccountPageComponent" />,
-  }
-)
+const AccountPage = Loadable(() => import("src/containers/AccountPage"), {
+  fallback: <IndefiniteLoading message="AccountPage" />,
+})
 
 const GraphPageComponent = Loadable(
   () => import("src/components/GraphPage/GraphPageComponent"),
@@ -56,17 +53,18 @@ const IndexPage = ({ location }) => {
     <InterfaceLayout location={location}>
       <SEOComponent title="App" />
       <Router>
+        <AppPageComponent path="/app" />
         <SigninPageComponent path="/app/signin" />
-        <PrivateRouteComponent path="/app" component={AppPageComponent} />
-        <PrivateRouteComponent
+        <AccountPage path="/app/account" />
+        <TreePageComponent path="/app/tree" />
+        <GraphPageComponent path="/app/graph" />
+        {/* <PrivateRouteComponent path="/app" component={AppPageComponent} /> */}
+        {/* <PrivateRouteComponent
           path="/app/graph"
           component={GraphPageComponent}
-        />
-        <PrivateRouteComponent path="/app/tree" component={TreePageComponent} />
-        <PrivateRouteComponent
-          path="/app/account"
-          component={AccountPageComponent}
-        />
+        /> */}
+        {/* <PrivateRouteComponent path="/app/tree" component={TreePageComponent} /> */}
+        {/* <PrivateRouteComponent path="/app/account" component={AccountPage} /> */}
       </Router>
     </InterfaceLayout>
   )

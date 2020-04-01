@@ -11,7 +11,7 @@ const TreeChip = ({ nodeData, handleClickOpen }) => {
   const classes = useStyles()
   const { name, attributes } = nodeData
   const { isOnline, isAvailable } = attributes
-  const [color, setColor] = useState("inherit")
+  const [color, setColor] = useState("default")
 
   useEffect(() => {
     if (isOnline === "true") {
