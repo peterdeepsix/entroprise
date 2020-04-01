@@ -75,36 +75,48 @@ const UsersPage = () => {
           <CardHeader title="User List" />
           <CardContent>
             <List className={classes.root}>
-              {error && <Typography>Error: {JSON.stringify(error)}</Typography>}
+              {error && <Typography>Error: {error.code}}</Typography>}
               {loading && <IndefiniteLoading message="UserList" />}
               {users && (
                 <>
-                  {users.docs.map(doc => (
-                    <ListItem disableGutters key={doc.id}>
-                      {(doc.data().online == true && (
-                        <ListItemAvatar>
-                          <StyledBadge
-                            overlap="circle"
-                            anchorOrigin={{
-                              vertical: "bottom",
-                              horizontal: "right",
-                            }}
-                            variant="dot"
-                          >
-                            <Avatar alt={"A"} />
-                          </StyledBadge>
-                        </ListItemAvatar>
-                      )) || (
-                        <ListItemAvatar>
-                          <Avatar alt={"A"} />
-                        </ListItemAvatar>
-                      )}
-                      <ListItemText
-                        primary={"Anonymous User"}
-                        secondary={doc.id}
-                      />
-                    </ListItem>
-                  ))}
+                  {users.docs.map(doc => {
+                    const data = doc.data()
+                    return (
+                      <ListItem disableGutters key={doc.id}>
+                        {(doc.data().online == true && (
+                          <ListItemAvatar>
+                            <StyledBadge
+                              overlap="circle"
+                              anchorOrigin={{
+                                vertical: "bottom",
+                                horizontal: "right",
+                              }}
+                              variant="dot"
+                            >
+                              <Avatar
+                                src={data.photoURL}
+                                alt={data.displayName}
+                              />
+                            </StyledBadge>
+                          </ListItemAvatar>
+                        )) || (
+                          <ListItemAvatar>
+                            <Avatar
+                              src={data.photoURL}
+                              alt={data.displayName}
+                            />
+                          </ListItemAvatar>
+                        )}
+                        <ListItemText
+                          primary={
+                            (data.isAnonymous && "Anonymous User") ||
+                            data.displayName
+                          }
+                          secondary={doc.id}
+                        />
+                      </ListItem>
+                    )
+                  })}
                 </>
               )}
             </List>

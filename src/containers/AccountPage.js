@@ -65,6 +65,9 @@ const AccountPage = () => {
   const [user, loading, error] = useAuthState(firebase.auth())
   const [isOnline, setIsOnline] = useState(false)
 
+  const db = firebase.firestore()
+  const usersRef = db.collection("users")
+
   useEffect(() => {
     if (user) {
       firebase
@@ -93,7 +96,23 @@ const AccountPage = () => {
     firebase
       .auth()
       .signInWithPopup(provider)
-      .then(result => {})
+      .then(result => {
+        usersRef.doc(result.user.uid).set(
+          {
+            displayName: result.user.displayName,
+            email: result.user.email,
+            emailVerified: result.user.emailVerified,
+            isAnonymous: result.user.isAnonymous,
+            phoneNumber: result.user.phoneNumber,
+            photoURL: result.user.photoURL,
+            providerId: result.user.providerId,
+            refreshToken: result.user.refreshToken,
+            uid: result.user.uid,
+            online: true,
+          },
+          { merge: true }
+        )
+      })
       .catch(error => {})
   }
 
@@ -120,7 +139,23 @@ const AccountPage = () => {
           firebase
             .auth()
             .signInWithPopup(provider)
-            .then(function(result) {})
+            .then(function(result) {
+              usersRef.doc(result.user.uid).set(
+                {
+                  displayName: result.user.displayName,
+                  email: result.user.email,
+                  emailVerified: result.user.emailVerified,
+                  isAnonymous: result.user.isAnonymous,
+                  phoneNumber: result.user.phoneNumber,
+                  photoURL: result.user.photoURL,
+                  providerId: result.user.providerId,
+                  refreshToken: result.user.refreshToken,
+                  uid: result.user.uid,
+                  online: true,
+                },
+                { merge: true }
+              )
+            })
             .catch(function(error) {})
         } else {
         }
