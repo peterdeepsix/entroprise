@@ -81,41 +81,52 @@ const UsersPage = () => {
                 <>
                   {users.docs.map(doc => {
                     const data = doc.data()
-                    return (
-                      <ListItem disableGutters key={doc.id}>
-                        {(doc.data().online == true && (
-                          <ListItemAvatar>
-                            <StyledBadge
-                              overlap="circle"
-                              anchorOrigin={{
-                                vertical: "bottom",
-                                horizontal: "right",
-                              }}
-                              variant="dot"
-                            >
-                              <Avatar
-                                src={data.photoURL}
-                                alt={data.displayName}
-                              />
-                            </StyledBadge>
-                          </ListItemAvatar>
-                        )) || (
-                          <ListItemAvatar>
-                            <Avatar
-                              src={data.photoURL}
-                              alt={data.displayName}
-                            />
-                          </ListItemAvatar>
-                        )}
-                        <ListItemText
-                          primary={
-                            (data.isAnonymous && "Anonymous User") ||
-                            data.displayName
-                          }
-                          secondary={doc.id}
-                        />
-                      </ListItem>
+                    if (
+                      (data.isAnonymous &&
+                        doc.data().status &&
+                        doc.data().status.state == "online") ||
+                      !data.isAnonymous
                     )
+                      return (
+                        <ListItem disableGutters key={doc.id}>
+                          {doc.data().status && (
+                            <>
+                              {(doc.data().status.state == "online" && (
+                                <ListItemAvatar>
+                                  <StyledBadge
+                                    overlap="circle"
+                                    anchorOrigin={{
+                                      vertical: "bottom",
+                                      horizontal: "right",
+                                    }}
+                                    variant="dot"
+                                  >
+                                    <Avatar
+                                      src={data.photoURL}
+                                      alt={data.displayName}
+                                    />
+                                  </StyledBadge>
+                                </ListItemAvatar>
+                              )) || (
+                                <ListItemAvatar>
+                                  <Avatar
+                                    src={data.photoURL}
+                                    alt={data.displayName}
+                                  />
+                                </ListItemAvatar>
+                              )}
+                            </>
+                          )}
+
+                          <ListItemText
+                            primary={
+                              (data.isAnonymous && "Anonymous User") ||
+                              data.displayName
+                            }
+                            secondary={doc.id}
+                          />
+                        </ListItem>
+                      )
                   })}
                 </>
               )}

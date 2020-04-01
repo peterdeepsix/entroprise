@@ -92,29 +92,66 @@ const AuthLayout = ({ children }) => {
     }
   }, [user])
 
-  usersRef
-    .get()
-    .then(snapshot => {
-      if (snapshot.exists) {
-        usersRef.onSnapshot(snapshot => {
-          snapshot.docChanges().forEach(change => {
-            if (change.type === "added") {
-              var msg = "User " + change.doc.id + " is online."
-            }
+  useMemo(() => {
+    if (user) {
+      usersRef
+        .get()
+        .then(snapshot => {
+          if (snapshot.exists) {
+            usersRef.onSnapshot(snapshot => {
+              snapshot.docChanges().forEach(change => {
+                if (change.type === "added") {
+                  var msg = "User " + change.doc.id + " is online."
+                  console.log(msg)
+                }
 
-            if (change.type === "removed") {
-              var msg = "User " + change.doc.id + " is offline."
-            }
-          })
+                if (change.type === "removed") {
+                  var msg = "User " + change.doc.id + " is offline."
+                  console.log(msg)
+                }
+              })
+            })
+          } else {
+            console.log("fs_listen_online, snapshot does not exist")
+          }
         })
-      } else {
-        console.log("fs_listen_online, snapshot does not exist")
-      }
-    })
-    .catch(function(err) {
-      console.error("Error from fs_listen_online:")
-      console.error(err)
-    })
+        .catch(function(err) {
+          console.error("Error from fs_listen_online:")
+          console.error(err)
+        })
+    }
+  }, [user])
+
+  useMemo(() => {
+    if (!user) {
+      firebase
+        .auth()
+        .signInAnonymously()
+        .then(result => {
+          usersRef.doc(result.user.uid).set(
+            {
+              displayName: result.user.displayName,
+              email: result.user.email,
+              emailVerified: result.user.emailVerified,
+              isAnonymous: result.user.isAnonymous,
+              phoneNumber: result.user.phoneNumber,
+              photoURL: result.user.photoURL,
+              providerId: result.user.providerId,
+              refreshToken: result.user.refreshToken,
+              uid: result.user.uid,
+              online: true,
+            },
+            { merge: true }
+          )
+        })
+        .catch(function(error) {
+          const errorCode = error.code
+          const errorMessage = error.message
+          console.log(errorCode)
+          console.log(errorMessage)
+        })
+    }
+  }, [user])
 
   return <>{children}</>
 }

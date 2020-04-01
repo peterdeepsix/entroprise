@@ -68,35 +68,24 @@ const AccountPage = () => {
   const db = firebase.firestore()
   const usersRef = db.collection("users")
 
-  useEffect(() => {
-    if (user) {
-      firebase
-        .database()
-        .ref("/status/" + user.uid)
-        .on("value", snapshot => {
-          const state = snapshot.val()
-          console.log("state")
-          console.log(state)
-          if (state == "online") {
-            setIsOnline(true)
-          } else {
-            setIsOnline(false)
-          }
-        })
-      console.log("DATA RETRIEVED")
-      console.log(isOnline)
-    }
-  }, [user])
-
   const provider = new firebase.auth.GoogleAuthProvider()
-  provider.addScope("https://www.googleapis.com/auth/contacts.readonly")
-  provider.addScope("https://www.googleapis.com/auth/calendar")
+  // provider.addScope("https://www.googleapis.com/auth/contacts.readonly")
+  // provider.addScope("https://www.googleapis.com/auth/calendar")
 
   const signInWithGoogle = () => {
     firebase
       .auth()
       .signInWithPopup(provider)
       .then(result => {
+        usersRef
+          .doc(user.uid)
+          .delete()
+          .then(function() {
+            console.log("User successfully deleted!")
+          })
+          .catch(function(error) {
+            console.error("Error removing User: ", error)
+          })
         usersRef.doc(result.user.uid).set(
           {
             displayName: result.user.displayName,
@@ -122,7 +111,32 @@ const AccountPage = () => {
       .then(result => {
         user
           .reauthenticateWithCredential(result.credential)
-          .then(result => {})
+          .then(result => {
+            usersRef
+              .doc(user.uid)
+              .delete()
+              .then(function() {
+                console.log("User successfully deleted!")
+              })
+              .catch(function(error) {
+                console.error("Error removing User: ", error)
+              })
+            usersRef.doc(result.user.uid).set(
+              {
+                displayName: result.user.displayName,
+                email: result.user.email,
+                emailVerified: result.user.emailVerified,
+                isAnonymous: result.user.isAnonymous,
+                phoneNumber: result.user.phoneNumber,
+                photoURL: result.user.photoURL,
+                providerId: result.user.providerId,
+                refreshToken: result.user.refreshToken,
+                uid: result.user.uid,
+                online: true,
+              },
+              { merge: true }
+            )
+          })
           .catch(error => {
             const errorCode = error.code
             const errorMessage = error.message
@@ -180,34 +194,9 @@ const AccountPage = () => {
                 <>
                   <List className={classes.root}>
                     <ListItem divider disableGutters>
-                      {console.log(isOnline)}
-                      {(isOnline == true && (
-                        <ListItemAvatar>
-                          <StyledBadge
-                            overlap="circle"
-                            anchorOrigin={{
-                              vertical: "bottom",
-                              horizontal: "right",
-                            }}
-                            variant="dot"
-                          >
-                            <Avatar alt={"A"} />
-                          </StyledBadge>
-                        </ListItemAvatar>
-                      )) || (
-                        <ListItemAvatar>
-                          <Avatar alt={"A"} />
-                        </ListItemAvatar>
-                      )}
                       <ListItemText
                         primary={"Anonymous User"}
                         secondary="Sign In To Upgrade"
-                      />
-                    </ListItem>
-                    <ListItem divider disableGutters>
-                      <ListItemText
-                        primary="User Alias"
-                        secondary="Steve Addington"
                       />
                     </ListItem>
                     <ListItem disableGutters>
