@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react"
+import Loadable from "@loadable/component"
 import firebase from "gatsby-plugin-firebase"
 import { useCollection } from "react-firebase-hooks/firestore"
+import { useAuthState } from "react-firebase-hooks/auth"
+import Peer from "peerjs"
 
 import IndefiniteLoading from "src/components/Loading/IndefiniteLoading"
 
@@ -15,13 +18,18 @@ import { makeStyles, withStyles } from "@material-ui/core/styles"
 import {
   Container,
   Box,
-  Button,
   Card,
   CardContent,
   CardHeader,
   Typography,
 } from "@material-ui/core"
-import { snap } from "gsap"
+
+const UsersPageComponent = Loadable(
+  () => import("src/components/UsersPage/UsersPageComponent"),
+  {
+    fallback: <IndefiniteLoading message="UsersPage" />,
+  }
+)
 
 const StyledBadge = withStyles(theme => ({
   badge: {
@@ -61,15 +69,38 @@ const useStyles = makeStyles(theme => ({
 const UsersPage = () => {
   const classes = useStyles()
 
-  const [users, loading, error] = useCollection(
-    firebase.firestore().collection("users"),
-    {
-      snapshotListenOptions: { includeMetadataChanges: true },
-    }
-  )
+  const [users] = useCollection(firebase.firestore().collection("users"), {
+    snapshotListenOptions: { includeMetadataChanges: true },
+  })
+
+  const [user, loading, error] = useAuthState(firebase.auth())
+
+  const [peer, setPeer] = useState(new Peer())
+
+  useEffect(() => {
+    if (user) setPeer(new Peer(user.uid))
+  }, [user])
+
+  const handleCall = uid => {
+    console.log("try handle call", uid)
+    const conn = peer.connect(uid)
+    conn.on("open", () => {
+      conn.send("hi!")
+    })
+  }
+
+  peer.on("connection", conn => {
+    conn.on("data", data => {
+      console.log(data)
+    })
+    conn.on("open", () => {
+      conn.send("hello!")
+    })
+  })
 
   return (
     <Container maxWidth="sm">
+      {user && <UsersPageComponent uid={user.uid} />}
       <Box mt={2} mb={1}>
         <Card variant="outlined">
           <CardHeader title="User List" />
@@ -81,7 +112,6 @@ const UsersPage = () => {
                 <>
                   {users.docs.map(doc => {
                     const data = doc.data()
-                    console.log(data)
                     if (data.status) {
                       if (
                         data.displayName == null &&
@@ -90,7 +120,13 @@ const UsersPage = () => {
                         return
                     }
                     return (
-                      <ListItem disableGutters key={doc.id}>
+                      <ListItem
+                        disableGutters
+                        key={doc.id}
+                        onClick={() => {
+                          handleCall(doc.id)
+                        }}
+                      >
                         {doc.data().status && (
                           <>
                             {(doc.data().status.state == "online" && (
