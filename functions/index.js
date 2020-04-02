@@ -9,10 +9,11 @@ exports.onUserStatusChanged = functions.database
   .onUpdate((change, context) => {
     const eventStatus = change.after.val()
     const userStatusFirestoreRef = firestore.doc(`users/${context.params.uid}`)
-
+    console.log(change, "change")
+    console.log(context, "context")
     return change.after.ref.once("value").then(statusSnapshot => {
       const status = statusSnapshot.val()
-      console.log(status, eventStatus)
+      console.log(status, "status")
       if (status.last_changed > eventStatus.last_changed) {
         return null
       }
@@ -23,6 +24,7 @@ exports.onUserStatusChanged = functions.database
           state: eventStatus.state,
         },
       }
+      console.log(newStatus, "newStatus")
       return userStatusFirestoreRef.set(newStatus, { merge: true })
     })
   })

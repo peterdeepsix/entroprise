@@ -81,52 +81,53 @@ const UsersPage = () => {
                 <>
                   {users.docs.map(doc => {
                     const data = doc.data()
-                    if (
-                      (data.isAnonymous &&
-                        doc.data().status &&
-                        doc.data().status.state == "online") ||
-                      !data.isAnonymous
-                    )
-                      return (
-                        <ListItem disableGutters key={doc.id}>
-                          {doc.data().status && (
-                            <>
-                              {(doc.data().status.state == "online" && (
-                                <ListItemAvatar>
-                                  <StyledBadge
-                                    overlap="circle"
-                                    anchorOrigin={{
-                                      vertical: "bottom",
-                                      horizontal: "right",
-                                    }}
-                                    variant="dot"
-                                  >
-                                    <Avatar
-                                      src={data.photoURL}
-                                      alt={data.displayName}
-                                    />
-                                  </StyledBadge>
-                                </ListItemAvatar>
-                              )) || (
-                                <ListItemAvatar>
+                    console.log(data)
+                    if (data.status) {
+                      if (
+                        data.displayName == null &&
+                        data.status.state == "offline"
+                      )
+                        return
+                    }
+                    return (
+                      <ListItem disableGutters key={doc.id}>
+                        {doc.data().status && (
+                          <>
+                            {(doc.data().status.state == "online" && (
+                              <ListItemAvatar>
+                                <StyledBadge
+                                  overlap="circle"
+                                  anchorOrigin={{
+                                    vertical: "bottom",
+                                    horizontal: "right",
+                                  }}
+                                  variant="dot"
+                                >
                                   <Avatar
                                     src={data.photoURL}
                                     alt={data.displayName}
                                   />
-                                </ListItemAvatar>
-                              )}
-                            </>
-                          )}
-
-                          <ListItemText
-                            primary={
-                              (data.isAnonymous && "Anonymous User") ||
-                              data.displayName
-                            }
-                            secondary={doc.id}
-                          />
-                        </ListItem>
-                      )
+                                </StyledBadge>
+                              </ListItemAvatar>
+                            )) || (
+                              <ListItemAvatar>
+                                <Avatar
+                                  src={data.photoURL}
+                                  alt={data.displayName}
+                                />
+                              </ListItemAvatar>
+                            )}
+                          </>
+                        )}
+                        <ListItemText
+                          primary={
+                            (data.isAnonymous && "Anonymous User") ||
+                            data.displayName
+                          }
+                          secondary={doc.id}
+                        />
+                      </ListItem>
+                    )
                   })}
                 </>
               )}

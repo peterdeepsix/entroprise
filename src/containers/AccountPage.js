@@ -80,10 +80,10 @@ const AccountPage = () => {
         usersRef
           .doc(user.uid)
           .delete()
-          .then(function() {
+          .then(() => {
             console.log("User successfully deleted!")
           })
-          .catch(function(error) {
+          .catch(error => {
             console.error("Error removing User: ", error)
           })
         usersRef.doc(result.user.uid).set(
@@ -97,90 +97,139 @@ const AccountPage = () => {
             providerId: result.user.providerId,
             refreshToken: result.user.refreshToken,
             uid: result.user.uid,
-            online: true,
+            status: {
+              state: "online",
+              last_changed: firebase.firestore.FieldValue.serverTimestamp(),
+            },
           },
           { merge: true }
         )
       })
-      .catch(error => {})
+      .catch(error => {
+        console.log(error.code)
+        console.log(error.message)
+      })
   }
 
   const upgradeAccountWithGoogle = () => {
-    user
-      .linkWithPopup(provider)
-      .then(result => {
-        user
-          .reauthenticateWithCredential(result.credential)
-          .then(result => {
-            usersRef
-              .doc(user.uid)
-              .delete()
-              .then(function() {
-                console.log("User successfully deleted!")
-              })
-              .catch(function(error) {
-                console.error("Error removing User: ", error)
-              })
-            usersRef.doc(result.user.uid).set(
-              {
-                displayName: result.user.displayName,
-                email: result.user.email,
-                emailVerified: result.user.emailVerified,
-                isAnonymous: result.user.isAnonymous,
-                phoneNumber: result.user.phoneNumber,
-                photoURL: result.user.photoURL,
-                providerId: result.user.providerId,
-                refreshToken: result.user.refreshToken,
-                uid: result.user.uid,
-                online: true,
-              },
-              { merge: true }
-            )
-          })
-          .catch(error => {
-            const errorCode = error.code
-            const errorMessage = error.message
-            if (errorCode === "auth/account-exists-with-different-credential") {
-              alert(errorMessage)
-            } else {
-            }
-          })
-      })
-      .catch(error => {
-        const errorCode = error.code
-        const errorMessage = error.message
-        if (errorCode === "auth/credential-already-in-use") {
-          firebase
-            .auth()
-            .signInWithPopup(provider)
-            .then(function(result) {
-              usersRef.doc(result.user.uid).set(
-                {
-                  displayName: result.user.displayName,
-                  email: result.user.email,
-                  emailVerified: result.user.emailVerified,
-                  isAnonymous: result.user.isAnonymous,
-                  phoneNumber: result.user.phoneNumber,
-                  photoURL: result.user.photoURL,
-                  providerId: result.user.providerId,
-                  refreshToken: result.user.refreshToken,
-                  uid: result.user.uid,
-                  online: true,
-                },
-                { merge: true }
-              )
-            })
-            .catch(function(error) {})
-        } else {
-        }
-      })
+    // user
+    //   .linkWithPopup(provider)
+    //   .then(result => {
+    //     user
+    //       .reauthenticateWithCredential(result.credential)
+    //       .then(result => {
+    //         usersRef
+    //           .doc(user.uid)
+    //           .delete()
+    //           .then(function() {
+    //             console.log("User successfully deleted!")
+    //           })
+    //           .catch(function(error) {
+    //             console.error("Error removing User: ", error)
+    //           })
+    //         usersRef.doc(result.user.uid).set(
+    //           {
+    //             displayName: result.user.displayName,
+    //             email: result.user.email,
+    //             emailVerified: result.user.emailVerified,
+    //             isAnonymous: result.user.isAnonymous,
+    //             phoneNumber: result.user.phoneNumber,
+    //             photoURL: result.user.photoURL,
+    //             providerId: result.user.providerId,
+    //             refreshToken: result.user.refreshToken,
+    //             uid: result.user.uid,
+    //             online: true,
+    //           },
+    //           { merge: true }
+    //         )
+    //       })
+    //       .catch(error => {
+    //         const errorCode = error.code
+    //         const errorMessage = error.message
+    //         if (errorCode === "auth/account-exists-with-different-credential") {
+    //           alert(errorMessage)
+    //         } else {
+    //         }
+    //       })
+    //   })
+    //   .catch(error => {
+    //     const errorCode = error.code
+    //     const errorMessage = error.message
+    //     if (errorCode === "auth/credential-already-in-use") {
+    //       firebase
+    //         .auth()
+    //         .signInWithPopup(provider)
+    //         .then(function(result) {
+    //           usersRef.doc(result.user.uid).set(
+    //             {
+    //               displayName: result.user.displayName,
+    //               email: result.user.email,
+    //               emailVerified: result.user.emailVerified,
+    //               isAnonymous: result.user.isAnonymous,
+    //               phoneNumber: result.user.phoneNumber,
+    //               photoURL: result.user.photoURL,
+    //               providerId: result.user.providerId,
+    //               refreshToken: result.user.refreshToken,
+    //               uid: result.user.uid,
+    //               online: true,
+    //             },
+    //             { merge: true }
+    //           )
+    //         })
+    //         .catch(function(error) {})
+    //     } else {
+    //     }
+    //   })
   }
 
   const signOut = () => {
-    firebase
-      .auth()
-      .signOut()
-      .then()
+    const userToDelete = user.uid
+    if (usersRef.isAnonymous) {
+      usersRef
+        .doc(userToDelete)
+        .delete()
+        .then(() => {
+          console.log("User successfully deleted!")
+          firebase
+            .auth()
+            .signOut()
+            .then()
+        })
+        .catch(error => {
+          console.error("Error removing User: ", error)
+        })
+    } else {
+      usersRef
+        .doc(user.uid)
+        .set(
+          {
+            displayName: user.displayName,
+            email: user.email,
+            emailVerified: user.emailVerified,
+            isAnonymous: user.isAnonymous,
+            phoneNumber: user.phoneNumber,
+            photoURL: user.photoURL,
+            providerId: user.providerId,
+            refreshToken: user.refreshToken,
+            uid: user.uid,
+            status: {
+              state: "offline",
+              last_changed: firebase.firestore.FieldValue.serverTimestamp(),
+            },
+          },
+          { merge: true }
+        )
+        .catch(error => {
+          console.log(error.code)
+          console.log(error.message)
+        })
+        .then(
+          firebase
+            .auth()
+            .signOut()
+            .then()
+        )
+    }
   }
 
   if (user)
@@ -208,7 +257,7 @@ const AccountPage = () => {
                 <>
                   <List className={classes.root} disablePadding>
                     <ListItem divider disableGutters>
-                      {(isOnline == true && (
+                      {/* {user.status.state == "online" && (
                         <ListItemAvatar>
                           <StyledBadge
                             overlap="circle"
@@ -218,14 +267,13 @@ const AccountPage = () => {
                             }}
                             variant="dot"
                           >
-                            <Avatar alt={"A"} />
+                            <Avatar
+                              src={user.providerData[0].photoURL}
+                              alt={user.providerData[0].displayName}
+                            />
                           </StyledBadge>
                         </ListItemAvatar>
-                      )) || (
-                        <ListItemAvatar>
-                          <Avatar alt={"A"} />
-                        </ListItemAvatar>
-                      )}
+                      )} */}
                       <ListItemText
                         primary={user.providerData[0].displayName}
                         secondary={user.providerData[0].email}
@@ -261,7 +309,7 @@ const AccountPage = () => {
                       Sign In With Google
                     </Button>
                   </Box>
-                  <Box mt={2} mb={1}>
+                  {/* <Box mt={2} mb={1}>
                     <Button
                       variant="outlined"
                       color="primary"
@@ -269,7 +317,7 @@ const AccountPage = () => {
                     >
                       Link Account With Google
                     </Button>
-                  </Box>
+                  </Box> */}
                 </>
               )}
               {!user.isAnonymous && (

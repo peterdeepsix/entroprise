@@ -42,3 +42,20 @@ const treeRef = useRef(null)
 
 // State hook
 const [count, setCount] = useState(0)
+
+// Delete all users, go into firebase web - dev tools consoles and run
+var intervalId
+
+var clearFunction = function() {
+  if ($('[aria-label="Delete account"]').size() == 0) {
+    console.log("interval cleared")
+    clearInterval(intervalId)
+    return
+  }
+  $('[aria-label="Delete account"]')[0].click()
+  setTimeout(function() {
+    $(".md-raised:contains(Delete)").click()
+  }, 1000)
+}
+
+intervalId = setInterval(clearFunction, 3000)
