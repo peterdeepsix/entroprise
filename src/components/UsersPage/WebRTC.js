@@ -25,6 +25,10 @@ import DuoOutlinedIcon from "@material-ui/icons/DuoOutlined"
 import Loadable from "@loadable/component"
 import IndefiniteLoading from "src/components/loading/indefiniteLoading"
 
+const UsersList = Loadable(() => import("./UsersList"), {
+  fallback: <IndefiniteLoading message="UsersList" />,
+})
+
 const RoomDialog = Loadable(() => import("./RoomDialog"), {
   fallback: <IndefiniteLoading message="RoomDialog" />,
 })
@@ -37,44 +41,14 @@ const useStyles = makeStyles(theme => ({
   root: {},
 }))
 
-const WebRTC = () => {
-  const classes = useStyles()
-
-  const [user, initialising, error] = useAuthState(firebase.auth())
+const WebRTC = ({ uid }) => {
+  const [peer, setPeer] = useState(new Peer(uid))
   const [remoteVideoStream, setRemoteVideoStream] = useState(null)
   const [localVideoStream, setLocalVideoStream] = useState(null)
   const [testVideoStream, setTestVideoStream] = useState(null)
-  const [peer, setPeer] = useState(new Peer(user.uid))
+
   const [open, setOpen] = useState(false)
   const [isCalling, setIsCalling] = useState(false)
-
-  const handleClickOpen = () => {
-    setOpen(true)
-  }
-
-  const handleClose = () => {
-    setOpen(false)
-  }
-
-  const [constraints, setConstraints] = useState({
-    // audio: true,
-    video: true,
-  })
-
-  useEffect(() => {
-    const getMediaStream = async () => {
-      try {
-        const mediaStream = await navigator.mediaDevices.getUserMedia(
-          constraints
-        )
-        console.log("Setting stream", mediaStream)
-        setLocalVideoStream(mediaStream)
-      } catch (error) {
-        console.error(error)
-      }
-    }
-    getMediaStream()
-  }, [constraints])
 
   useEffect(() => {
     return () => {
@@ -89,53 +63,60 @@ const WebRTC = () => {
     }
   }, [localVideoStream])
 
-  const callUser = async id => {
-    setIsCalling(true)
-    console.log("OUTGOING CALL")
-    console.log(id)
+  const initCall = doc => {
+    const data = doc.data()
+    // getMediaStream()
+    console.log("data", data.uid)
+    console.log("peer", peer)
+    const conn = peer.connect(data.uid)
+  }
 
-    console.log("peer")
-    console.log(peer)
-    const call = peer.call(id, localVideoStream)
+  peer.on("connection", conn => {
+    conn.on("data", function(data) {
+      console.log("Received", data)
+    })
+    conn.on("open", () => {
+      conn.send("hello!")
+      console.log("open", open)
+    })
+  })
 
-    console.log("call")
-    console.log(call)
-    call.on("stream", function(remoteStream) {
-      setRemoteVideoStream(remoteStream)
-      handleClickOpen()
-      setIsCalling(false)
+  const handleClose = () => {
+    cleanupMediaStream()
+    setOpen(false)
+  }
+
+  const getMediaStream = async () => {
+    try {
+      const mediaStream = await navigator.mediaDevices.getUserMedia({
+        // audio: true,
+        video: true,
+      })
+      setLocalVideoStream(mediaStream)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const cleanupMediaStream = () => {
+    if (!localVideoStream) {
+      return
+    }
+    console.log("Cleaning up stream.", localVideoStream)
+    const tracks = localVideoStream.getTracks()
+    tracks.forEach(track => {
+      track.stop()
     })
   }
 
-  peer.on("disconnected", () => {
-    handleClose()
-    setIsCalling(false)
-  })
-
-  peer.on("call", call => {
-    console.log("INCOMING CALL")
-
-    console.log("call")
-    console.log(call)
-    call.answer(localVideoStream)
-    call.on("stream", remoteStream => {
-      setRemoteVideoStream(remoteStream)
-      handleClickOpen()
-      setIsCalling(false)
-    })
-  })
-
   return (
     <>
+      <UsersList callUser={initCall} />
       {isCalling && <IndefiniteLoading message="isCalling" />}
-      <Box mt={2}>
-        <Card>
-          <RoomDialog handleClose={handleClose} open={open}>
-            <VideoStream stream={remoteVideoStream} />
-            <VideoStream muted={true} stream={localVideoStream} />
-          </RoomDialog>
-        </Card>
-      </Box>
+      <RoomDialog handleClose={handleClose} open={open}>
+        <VideoStream stream={remoteVideoStream} />
+        <VideoStream muted={true} stream={localVideoStream} />
+      </RoomDialog>
     </>
   )
 }

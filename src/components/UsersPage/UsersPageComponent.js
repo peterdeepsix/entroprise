@@ -2,13 +2,7 @@ import React from "react"
 import Peer from "peerjs"
 import Loadable from "@loadable/component"
 
-import {
-  Container,
-  Box,
-  Card,
-  CardContent,
-  CardHeader,
-} from "@material-ui/core"
+import { Box } from "@material-ui/core"
 
 import IndefiniteLoading from "src/components/loading/indefiniteLoading"
 
@@ -28,14 +22,11 @@ const UsersPageComponent = ({ uid }) => {
     })
   })
   return (
-    <Box mt={2} mb={1}>
-      <Card variant="outlined">
-        <CardHeader title="Users Page" />
-        <CardContent>
-          <WebRTC uid={uid} />
-        </CardContent>
-      </Card>
-    </Box>
+    <>
+      <Box mt={2} mb={1}>
+        <WebRTC uid={uid} />
+      </Box>
+    </>
   )
 }
 export default UsersPageComponent
