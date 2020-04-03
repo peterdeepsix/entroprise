@@ -11,6 +11,7 @@ import {
 
 import PeopleAltOutlinedIcon from "@material-ui/icons/PeopleAltOutlined"
 import NaturePeopleOutlinedIcon from "@material-ui/icons/NaturePeopleOutlined"
+import ForumOutlinedIcon from "@material-ui/icons/ForumOutlined"
 
 const useStyles = makeStyles({
   stickToBottom: {
@@ -55,6 +56,11 @@ const LowerNavigation = ({ location }) => {
           value="/app/tree"
           label="Tree Graph"
           icon={<NaturePeopleOutlinedIcon />}
+        />
+        <BottomNavigationAction
+          value="/app/chat"
+          label="Chat"
+          icon={<ForumOutlinedIcon />}
         />
       </BottomNavigation>
     </AppBar>

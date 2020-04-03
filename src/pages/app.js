@@ -30,6 +30,13 @@ const SigninPageComponent = Loadable(
   }
 )
 
+const TreePageComponent = Loadable(
+  () => import("src/components/TreePage/TreePageComponent"),
+  {
+    fallback: <IndefiniteLoading message="TreePageComponent" />,
+  }
+)
+
 const AccountPage = Loadable(() => import("src/containers/AccountPage"), {
   fallback: <IndefiniteLoading message="AccountPage" />,
 })
@@ -38,19 +45,9 @@ const UsersPage = Loadable(() => import("src/containers/UsersPage"), {
   fallback: <IndefiniteLoading message="UsersPage" />,
 })
 
-const GraphPageComponent = Loadable(
-  () => import("src/components/GraphPage/GraphPageComponent"),
-  {
-    fallback: <IndefiniteLoading message="GraphPageComponent" />,
-  }
-)
-
-const TreePageComponent = Loadable(
-  () => import("src/components/TreePage/TreePageComponent"),
-  {
-    fallback: <IndefiniteLoading message="TreePageComponent" />,
-  }
-)
+const ChatPageComponent = Loadable(() => import("src/containers/ChatPage"), {
+  fallback: <IndefiniteLoading message="ChatPageComponent" />,
+})
 
 const IndexPage = ({ location }) => {
   return (
@@ -62,7 +59,7 @@ const IndexPage = ({ location }) => {
         <UsersPage path="/app/users" />
         <AccountPage path="/app/account" />
         <TreePageComponent path="/app/tree" />
-        <GraphPageComponent path="/app/graph" />
+        <ChatPageComponent path="/app/chat" />
         {/* <PrivateRouteComponent path="/app" component={AppPageComponent} /> */}
         {/* <PrivateRouteComponent
           path="/app/graph"
