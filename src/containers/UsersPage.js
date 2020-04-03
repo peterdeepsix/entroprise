@@ -1,28 +1,14 @@
 import React, { useState, useEffect } from "react"
 import Loadable from "@loadable/component"
+
 import firebase from "gatsby-plugin-firebase"
-import { useCollection } from "react-firebase-hooks/firestore"
 import { useAuthState } from "react-firebase-hooks/auth"
-import Peer from "peerjs"
+
+import { makeStyles } from "@material-ui/core/styles"
+import { Container, Snackbar, IconButton } from "@material-ui/core"
+import CloseIcon from "@material-ui/icons/Close"
 
 import IndefiniteLoading from "src/components/Loading/IndefiniteLoading"
-
-import Badge from "@material-ui/core/Badge"
-import Avatar from "@material-ui/core/Avatar"
-import List from "@material-ui/core/List"
-import ListItem from "@material-ui/core/ListItem"
-import ListItemText from "@material-ui/core/ListItemText"
-import ListItemAvatar from "@material-ui/core/ListItemAvatar"
-import { makeStyles, withStyles } from "@material-ui/core/styles"
-
-import {
-  Container,
-  Box,
-  Card,
-  CardContent,
-  CardHeader,
-  Typography,
-} from "@material-ui/core"
 
 const UsersPageComponent = Loadable(
   () => import("src/components/UsersPage/UsersPageComponent"),
@@ -31,76 +17,52 @@ const UsersPageComponent = Loadable(
   }
 )
 
-const StyledBadge = withStyles(theme => ({
-  badge: {
-    backgroundColor: "#44b700",
-    color: "#44b700",
-    boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
-    "&::after": {
-      position: "absolute",
-      top: 0,
-      left: 0,
-      width: "100%",
-      height: "100%",
-      borderRadius: "50%",
-      animation: "$ripple 1.2s infinite ease-in-out",
-      border: "1px solid currentColor",
-      content: '""',
-    },
-  },
-  "@keyframes ripple": {
-    "0%": {
-      transform: "scale(.8)",
-      opacity: 1,
-    },
-    "100%": {
-      transform: "scale(2.4)",
-      opacity: 0,
-    },
-  },
-}))(Badge)
-
 const useStyles = makeStyles(theme => ({
-  root: {
-    width: "100%",
-  },
+  root: {},
 }))
 
 const UsersPage = () => {
   const classes = useStyles()
 
-  const [users] = useCollection(firebase.firestore().collection("users"), {
-    snapshotListenOptions: { includeMetadataChanges: true },
-  })
-
   const [user, loading, error] = useAuthState(firebase.auth())
 
-  const [peer, setPeer] = useState(new Peer())
+  const [open, setOpen] = useState(false)
 
-  useEffect(() => {
-    if (user) setPeer(new Peer(user.uid))
-  }, [user])
-
-  const handleCall = uid => {
-    console.log("try handle call", uid)
-    const conn = peer.connect(uid)
-    conn.on("open", () => {
-      conn.send("hi!")
-    })
+  const handleClose = reason => {
+    if (reason === "clickaway") {
+      return
+    }
+    setOpen(false)
   }
 
-  peer.on("connection", conn => {
-    conn.on("data", data => {
-      console.log(data)
-    })
-    conn.on("open", () => {
-      conn.send("hello!")
-    })
-  })
+  useEffect(() => {
+    if (error) setOpen(true)
+  }, [error])
 
   return (
-    <Container maxWidth="sm">
-      {user && <UsersPageComponent uid={user.uid} />}
+    <Container className={classes.root} maxWidth="sm">
+      {user && <UsersPageComponent />}
+      {loading && <IndefiniteLoading message="UserData" />}
+      <Snackbar
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+        open={open}
+        autoHideDuration={6000}
+        onClose={handleClose}
+        message={error}
+        action={
+          <IconButton
+            size="small"
+            aria-label="close"
+            color="inherit"
+            onClick={handleClose}
+          >
+            <CloseIcon fontSize="small" />
+          </IconButton>
+        }
+      />
     </Container>
   )
 }

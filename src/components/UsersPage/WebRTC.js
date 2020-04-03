@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react"
-import { useAuthState } from "react-firebase-hooks/auth"
+import Loadable from "@loadable/component"
+
 import firebase from "gatsby-plugin-firebase"
-import Peer from "peerjs"
+import { useAuthState } from "react-firebase-hooks/auth"
 
 import { makeStyles } from "@material-ui/core/styles"
 import {
@@ -20,9 +21,7 @@ import {
   ListItemAvatar,
   Avatar,
 } from "@material-ui/core"
-import DuoOutlinedIcon from "@material-ui/icons/DuoOutlined"
 
-import Loadable from "@loadable/component"
 import IndefiniteLoading from "src/components/loading/indefiniteLoading"
 
 const UsersList = Loadable(() => import("./UsersList"), {
@@ -41,11 +40,9 @@ const useStyles = makeStyles(theme => ({
   root: {},
 }))
 
-const WebRTC = ({ uid }) => {
-  const [peer, setPeer] = useState(new Peer(uid))
+const WebRTC = () => {
   const [remoteVideoStream, setRemoteVideoStream] = useState(null)
   const [localVideoStream, setLocalVideoStream] = useState(null)
-  const [testVideoStream, setTestVideoStream] = useState(null)
 
   const [open, setOpen] = useState(false)
   const [isCalling, setIsCalling] = useState(false)
@@ -63,27 +60,12 @@ const WebRTC = ({ uid }) => {
     }
   }, [localVideoStream])
 
-  const initCall = doc => {
+  const initCall = async doc => {
+    setOpen(true)
     const data = doc.data()
-    // getMediaStream()
-    console.log("data", data.uid)
-    console.log("peer", peer)
-    const conn = peer.connect(data.uid)
-  }
-
-  peer.on("connection", conn => {
-    conn.on("data", function(data) {
-      console.log("Received", data)
-    })
-    conn.on("open", () => {
-      conn.send("hello!")
-      console.log("open", open)
-    })
-  })
-
-  const handleClose = () => {
-    cleanupMediaStream()
-    setOpen(false)
+    const mediaStream = getMediaStream()
+    console.log("data", data)
+    console.log("mediaStream", mediaStream)
   }
 
   const getMediaStream = async () => {
@@ -93,6 +75,7 @@ const WebRTC = ({ uid }) => {
         video: true,
       })
       setLocalVideoStream(mediaStream)
+      return mediaStream
     } catch (error) {
       console.error(error)
     }
@@ -109,12 +92,18 @@ const WebRTC = ({ uid }) => {
     })
   }
 
+  const handleClose = () => {
+    cleanupMediaStream()
+    setOpen(false)
+  }
+
   return (
     <>
       <UsersList callUser={initCall} />
       {isCalling && <IndefiniteLoading message="isCalling" />}
       <RoomDialog handleClose={handleClose} open={open}>
-        <VideoStream stream={remoteVideoStream} />
+        {/* <VideoStream stream={remoteVideoStream} /> */}
+        <VideoStream muted={true} stream={localVideoStream} />
         <VideoStream muted={true} stream={localVideoStream} />
       </RoomDialog>
     </>

@@ -1,9 +1,10 @@
 import React from "react"
 
 import { makeStyles } from "@material-ui/core/styles"
+import { Box } from "@material-ui/core"
 
 const useStyles = makeStyles(theme => ({
-  root: {},
+  video: { width: "100%" },
 }))
 
 const VideoStream = ({ muted, stream }) => {
@@ -15,6 +16,15 @@ const VideoStream = ({ muted, stream }) => {
     }
   }
 
-  return <video muted={muted} autoPlay={true} ref={setVideoRef} />
+  return (
+    <Box>
+      <video
+        className={classes.video}
+        muted={muted}
+        autoPlay={true}
+        ref={setVideoRef}
+      />
+    </Box>
+  )
 }
 export default VideoStream

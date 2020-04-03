@@ -3,7 +3,6 @@ import Loadable from "@loadable/component"
 import firebase from "gatsby-plugin-firebase"
 import { useCollection } from "react-firebase-hooks/firestore"
 import { useAuthState } from "react-firebase-hooks/auth"
-import Peer from "peerjs"
 
 import IndefiniteLoading from "src/components/Loading/IndefiniteLoading"
 
