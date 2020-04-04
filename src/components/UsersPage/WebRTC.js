@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState, useRef } from "react"
 import Loadable from "@loadable/component"
 
 import firebase from "gatsby-plugin-firebase"
 import { useAuthState } from "react-firebase-hooks/auth"
+import * as handpose from "@tensorflow-models/handpose"
+import * as facemesh from "@tensorflow-models/facemesh"
 
 import { makeStyles } from "@material-ui/core/styles"
 import {
@@ -47,6 +49,21 @@ const WebRTC = () => {
   const [open, setOpen] = useState(false)
   const [isCalling, setIsCalling] = useState(false)
 
+  const faceVideoRef = useRef()
+
+  const observeWithFacemesh = async () => {
+    // Load the MediaPipe facemesh model assets.
+    const model = await facemesh.load()
+
+    // Pass in a video stream to the model to obtain
+    // an array of detected faces from the MediaPipe graph.
+    const faces = await model.estimateFaces(faceVideoRef)
+
+    // Each face object contains a `scaledMesh` property,
+    // which is an array of 468 landmarks.
+    faces.forEach(face => console.log(face.scaledMesh))
+  }
+
   useEffect(() => {
     return () => {
       if (!localVideoStream) {
@@ -63,9 +80,13 @@ const WebRTC = () => {
   const initCall = async doc => {
     setOpen(true)
     const data = doc.data()
-    const mediaStream = getMediaStream()
     console.log("data", data)
-    console.log("mediaStream", mediaStream)
+
+    const inputSteam = await getMediaStream()
+    console.log("inputSteam", inputSteam)
+
+    // const facemeshData = observeWithFacemesh(localVideoStream)
+    // console.log("facemeshData", facemeshData)
   }
 
   const getMediaStream = async () => {
@@ -102,8 +123,6 @@ const WebRTC = () => {
       <UsersList callUser={initCall} />
       {isCalling && <IndefiniteLoading message="isCalling" />}
       <RoomDialog handleClose={handleClose} open={open}>
-        {/* <VideoStream stream={remoteVideoStream} /> */}
-        <VideoStream muted={true} stream={localVideoStream} />
         <VideoStream muted={true} stream={localVideoStream} />
       </RoomDialog>
     </>

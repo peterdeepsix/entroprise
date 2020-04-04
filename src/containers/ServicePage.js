@@ -10,10 +10,10 @@ import CloseIcon from "@material-ui/icons/Close"
 
 import IndefiniteLoading from "src/components/Loading/IndefiniteLoading"
 
-const ChatPageComponent = Loadable(
-  () => import("src/components/ChatPage/ChatPageComponent"),
+const ServicePageComponent = Loadable(
+  () => import("src/components/ServicePage/ServicePageComponent"),
   {
-    fallback: <IndefiniteLoading message="ChatPage" />,
+    fallback: <IndefiniteLoading message="ServicePageComponent" />,
   }
 )
 
@@ -21,7 +21,7 @@ const useStyles = makeStyles(theme => ({
   root: {},
 }))
 
-const ChatPage = () => {
+const ServicePage = () => {
   const classes = useStyles()
 
   const [user, loading, error] = useAuthState(firebase.auth())
@@ -41,7 +41,7 @@ const ChatPage = () => {
 
   return (
     <Container className={classes.root} maxWidth="sm">
-      {user && <ChatPageComponent />}
+      {user && <ServicePageComponent />}
       {loading && <IndefiniteLoading message="UserData" />}
       <Snackbar
         anchorOrigin={{
@@ -66,4 +66,4 @@ const ChatPage = () => {
     </Container>
   )
 }
-export default ChatPage
+export default ServicePage

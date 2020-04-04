@@ -13,6 +13,8 @@ import {
 } from "@material-ui/core"
 import CloseIcon from "@material-ui/icons/Close"
 
+import * as handtrack from "@tensorflow-models/handpose"
+
 const useStyles = makeStyles(theme => ({
   root: {
     width: "100%",
@@ -52,7 +54,7 @@ const RoomDialog = ({ open, handleClose, children }) => {
               <CloseIcon />
             </IconButton>
             <Typography variant="h6" className={classes.title}>
-              Web RTC
+              Presence Portal
             </Typography>
             <Button autoFocus color="inherit" onClick={handleClose}>
               Close

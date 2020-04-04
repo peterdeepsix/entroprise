@@ -22,6 +22,14 @@ const IndexComponent = () => {
           </CardContent>
         </Card>
       </Box>
+      <Box mt={2} mb={1}>
+        <Card variant="outlined">
+          <CardHeader title="Timeline" />
+          <CardContent>
+            <Typography>When the enterprise hits the fan.</Typography>
+          </CardContent>
+        </Card>
+      </Box>
       <Box mt={2} mb={10}>
         <Card variant="outlined">
           <CardHeader title=" Prior Art" />

@@ -45,8 +45,8 @@ const UsersPage = Loadable(() => import("src/containers/UsersPage"), {
   fallback: <IndefiniteLoading message="UsersPage" />,
 })
 
-const ChatPageComponent = Loadable(() => import("src/containers/ChatPage"), {
-  fallback: <IndefiniteLoading message="ChatPageComponent" />,
+const ServicePage = Loadable(() => import("src/containers/ServicePage"), {
+  fallback: <IndefiniteLoading message="ServicePage" />,
 })
 
 const IndexPage = ({ location }) => {
@@ -59,7 +59,7 @@ const IndexPage = ({ location }) => {
         <UsersPage path="/app/users" />
         <AccountPage path="/app/account" />
         <TreePageComponent path="/app/tree" />
-        <ChatPageComponent path="/app/chat" />
+        <ServicePage path="/app/service" />
         {/* <PrivateRouteComponent path="/app" component={AppPageComponent} /> */}
         {/* <PrivateRouteComponent
           path="/app/graph"

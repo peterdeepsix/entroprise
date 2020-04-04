@@ -58,8 +58,8 @@ const LowerNavigation = ({ location }) => {
           icon={<NaturePeopleOutlinedIcon />}
         />
         <BottomNavigationAction
-          value="/app/chat"
-          label="Chat"
+          value="/app/service"
+          label="Service"
           icon={<ForumOutlinedIcon />}
         />
       </BottomNavigation>

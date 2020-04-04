@@ -19,6 +19,7 @@ const VideoStream = ({ muted, stream }) => {
   return (
     <Box>
       <video
+        id="face-video"
         className={classes.video}
         muted={muted}
         autoPlay={true}
