@@ -1,13 +1,13 @@
 import React, { useEffect, useState, useRef } from "react"
 import Loadable from "@loadable/component"
+import ReactInterval from "react-interval"
+import useUserMedia from "react-use-user-media"
 
 import firebase from "gatsby-plugin-firebase"
 import { useAuthState } from "react-firebase-hooks/auth"
-import * as facemesh from "@tensorflow-models/facemesh"
+import * as blazeface from "@tensorflow-models/blazeface"
 import * as tf from "@tensorflow/tfjs-core"
 import * as tfjsWasm from "@tensorflow/tfjs-backend-wasm"
-
-import { useUserMedia } from "./useUserMedia"
 
 import { makeStyles } from "@material-ui/core/styles"
 import {
@@ -26,9 +26,11 @@ import {
   ListItemText,
   ListItemAvatar,
   Avatar,
+  CircularProgress,
 } from "@material-ui/core"
 
 import IndefiniteLoading from "src/components/loading/indefiniteLoading"
+import { set } from "mobx"
 
 const UsersList = Loadable(() => import("./UsersList"), {
   fallback: <IndefiniteLoading message="UsersList" />,
@@ -46,100 +48,87 @@ const useStyles = makeStyles(theme => ({
   video: { width: "100%" },
 }))
 
+const constraints = { video: true, audio: false }
+
 const WebRTC = () => {
   const classes = useStyles()
 
-  const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [isCalling, setIsCalling] = useState(false)
-  const [isOnline, setIsOnline] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
+  const [isPredicting, setIsPredicting] = useState(false)
+  const [confidenceScore, setConfidenceScore] = useState()
 
+  const { state, stream } = useUserMedia(constraints)
   const videoRef = useRef()
-  const mediaStream = useUserMedia({
-    audio: false,
-    video: true,
-    video: { width: 300, height: 300 },
-  })
 
-  function handleCanPlay() {
+  useEffect(() => {
+    if (state !== "resolved" || !stream) {
+      return
+    }
+
+    videoRef.current.srcObject = stream
     videoRef.current.play()
-  }
+  }, [state, stream])
 
   const handleClickUser = () => {
-    setIsDialogOpen(true)
-  }
-
-  const handleDialogClose = () => {
-    setIsDialogOpen(false)
-  }
-
-  const handleSetIsOnline = () => {
-    console.log("setIsOnline")
-    setIsOnline(true)
-    videoRef.current.play()
+    console.log("call user")
   }
 
   const handleDetectFaces = async () => {
-    console.log("handleDetectFaces")
-    console.log("model loading")
-    const model = await facemesh.load()
-    console.log("model loaded")
-    console.log("starting prediction")
-    const current = videoRef.current
-    const predictions = await model.estimateFaces(current)
-    console.log("prediction completed")
+    setIsPredicting(true)
+    setConfidenceScore(null)
+    const model = await blazeface.load()
+    const predictions = await model.estimateFaces(videoRef.current)
     if (predictions.length > 0) {
       predictions.forEach(prediction => {
-        console.log(prediction.faceInViewConfidence)
-        if (prediction.faceInViewConfidence >= 0.8) {
-          window.alert("User is Online")
-        } else {
-          window.alert("User is disconnected.")
-        }
+        console.log(prediction)
+        setConfidenceScore(prediction.probability[0])
       })
     }
+    setIsPredicting(false)
   }
 
-  useEffect(() => {
-    if (mediaStream && videoRef.current && !videoRef.current.srcObject) {
-      videoRef.current.srcObject = mediaStream
-    }
-    return () => {
-      if (mediaStream) {
-        mediaStream.getTracks()[0].stop()
-      }
-    }
-  }, [mediaStream])
+  if (state === "pending") {
+    return <IndefiniteLoading message="Video" />
+  }
+
+  if (state === "rejected") {
+    return <p>Error {state}</p>
+  }
 
   return (
     <>
       <Box mt={2} mb={1}>
         <Card variant="outlined">
           <CardHeader title="User Status" />
-          <video
-            ref={videoRef}
-            onCanPlay={handleCanPlay}
-            playsInline
-            muted
-            width={"100%"}
-          />
+          {stream && (
+            <>
+              <video
+                className={classes.video}
+                ref={videoRef}
+                autoPlay
+                playsInline
+                muted
+              />
+              <ReactInterval
+                timeout={1000}
+                enabled={true}
+                callback={handleDetectFaces}
+              />
+            </>
+          )}
+
           <CardContent>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleDetectFaces}
-            >
-              Predict
-            </Button>
+            <Box mt={2} mb={1}>
+              <Typography>
+                Confidence User is Online:
+                {confidenceScore && <> {confidenceScore.toFixed(2) * 100}%</>}
+              </Typography>
+            </Box>
           </CardContent>
         </Card>
       </Box>
-
-      <UsersList callUser={handleClickUser} />
-      {isCalling && <IndefiniteLoading message="isCalling" />}
-      <RoomDialog handleClose={handleDialogClose} open={isDialogOpen}>
-        <Box>Call User</Box>
-      </RoomDialog>
+      <Box mt={2} mb={10}>
+        <UsersList callUser={handleClickUser} />
+      </Box>
     </>
   )
 }
