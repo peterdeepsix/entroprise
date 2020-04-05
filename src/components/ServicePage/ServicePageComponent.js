@@ -14,28 +14,20 @@ import CloseIcon from "@material-ui/icons/Close"
 import IndefiniteLoading from "src/components/Loading/IndefiniteLoading"
 import { Room } from "twilio-video"
 
-const RoomDialog = Loadable(() => import("./RoomDialog"), {
-  fallback: <IndefiniteLoading message="RoomDialog" />,
+const VideoChat = Loadable(() => import("./VideoChat"), {
+  fallback: <IndefiniteLoading message="VideoChat" />,
 })
 
 const useStyles = makeStyles(theme => ({
   root: {},
 }))
 
-const ServicePageComponent = () => {
+const ServicePageComponent = ({ user }) => {
   const classes = useStyles()
 
   return (
     <>
-      <Box mt={2} mb={1}>
-        <Card variant="outlined">
-          <CardHeader title="Rooms" />
-          <CardContent>
-            <Typography>Rooms</Typography>
-          </CardContent>
-        </Card>
-      </Box>
-      <RoomDialog />
+      <VideoChat user={user} />
     </>
   )
 }

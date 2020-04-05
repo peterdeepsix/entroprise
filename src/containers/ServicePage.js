@@ -41,7 +41,7 @@ const ServicePage = () => {
 
   return (
     <Container className={classes.root} maxWidth="sm">
-      {user && <ServicePageComponent />}
+      {user && <ServicePageComponent user={user} />}
       {loading && <IndefiniteLoading message="UserData" />}
       <Snackbar
         anchorOrigin={{
