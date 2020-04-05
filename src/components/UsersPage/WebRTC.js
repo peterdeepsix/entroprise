@@ -3,8 +3,11 @@ import Loadable from "@loadable/component"
 
 import firebase from "gatsby-plugin-firebase"
 import { useAuthState } from "react-firebase-hooks/auth"
-import * as handpose from "@tensorflow-models/handpose"
 import * as facemesh from "@tensorflow-models/facemesh"
+import * as tf from "@tensorflow/tfjs-core"
+import * as tfjsWasm from "@tensorflow/tfjs-backend-wasm"
+
+import { useUserMedia } from "./useUserMedia"
 
 import { makeStyles } from "@material-ui/core/styles"
 import {
@@ -15,6 +18,7 @@ import {
   Card,
   CardContent,
   CardHeader,
+  CardActions,
   IconButton,
   List,
   ListItem,
@@ -34,96 +38,107 @@ const RoomDialog = Loadable(() => import("./RoomDialog"), {
   fallback: <IndefiniteLoading message="RoomDialog" />,
 })
 
-const VideoStream = Loadable(() => import("./VideoStream"), {
-  fallback: <IndefiniteLoading message="VideoStream" />,
+const LocalTracks = Loadable(() => import("./LocalTracks"), {
+  fallback: <IndefiniteLoading message="LocalTracks" />,
 })
 
 const useStyles = makeStyles(theme => ({
-  root: {},
+  video: { width: "100%" },
 }))
 
 const WebRTC = () => {
-  const [remoteVideoStream, setRemoteVideoStream] = useState(null)
-  const [localVideoStream, setLocalVideoStream] = useState(null)
+  const classes = useStyles()
 
-  const [open, setOpen] = useState(false)
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [isCalling, setIsCalling] = useState(false)
+  const [isOnline, setIsOnline] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
-  const faceVideoRef = useRef()
+  const videoRef = useRef()
+  const mediaStream = useUserMedia({
+    audio: false,
+    video: true,
+    video: { width: 300, height: 300 },
+  })
 
-  const observeWithFacemesh = async () => {
-    // Load the MediaPipe facemesh model assets.
+  function handleCanPlay() {
+    videoRef.current.play()
+  }
+
+  const handleClickUser = () => {
+    setIsDialogOpen(true)
+  }
+
+  const handleDialogClose = () => {
+    setIsDialogOpen(false)
+  }
+
+  const handleSetIsOnline = () => {
+    console.log("setIsOnline")
+    setIsOnline(true)
+    videoRef.current.play()
+  }
+
+  const handleDetectFaces = async () => {
+    console.log("handleDetectFaces")
+    console.log("model loading")
     const model = await facemesh.load()
-
-    // Pass in a video stream to the model to obtain
-    // an array of detected faces from the MediaPipe graph.
-    const faces = await model.estimateFaces(faceVideoRef)
-
-    // Each face object contains a `scaledMesh` property,
-    // which is an array of 468 landmarks.
-    faces.forEach(face => console.log(face.scaledMesh))
+    console.log("model loaded")
+    console.log("starting prediction")
+    const current = videoRef.current
+    const predictions = await model.estimateFaces(current)
+    console.log("prediction completed")
+    if (predictions.length > 0) {
+      predictions.forEach(prediction => {
+        console.log(prediction.faceInViewConfidence)
+        if (prediction.faceInViewConfidence >= 0.8) {
+          window.alert("User is Online")
+        } else {
+          window.alert("User is disconnected.")
+        }
+      })
+    }
   }
 
   useEffect(() => {
+    if (mediaStream && videoRef.current && !videoRef.current.srcObject) {
+      videoRef.current.srcObject = mediaStream
+    }
     return () => {
-      if (!localVideoStream) {
-        return
+      if (mediaStream) {
+        mediaStream.getTracks()[0].stop()
       }
-      console.log("Cleaning up stream.", localVideoStream)
-      const tracks = localVideoStream.getTracks()
-      tracks.forEach(track => {
-        track.stop()
-      })
     }
-  }, [localVideoStream])
-
-  const initCall = async doc => {
-    setOpen(true)
-    const data = doc.data()
-    console.log("data", data)
-
-    const inputSteam = await getMediaStream()
-    console.log("inputSteam", inputSteam)
-
-    // const facemeshData = observeWithFacemesh(localVideoStream)
-    // console.log("facemeshData", facemeshData)
-  }
-
-  const getMediaStream = async () => {
-    try {
-      const mediaStream = await navigator.mediaDevices.getUserMedia({
-        // audio: true,
-        video: true,
-      })
-      setLocalVideoStream(mediaStream)
-      return mediaStream
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
-  const cleanupMediaStream = () => {
-    if (!localVideoStream) {
-      return
-    }
-    console.log("Cleaning up stream.", localVideoStream)
-    const tracks = localVideoStream.getTracks()
-    tracks.forEach(track => {
-      track.stop()
-    })
-  }
-
-  const handleClose = () => {
-    cleanupMediaStream()
-    setOpen(false)
-  }
+  }, [mediaStream])
 
   return (
     <>
-      <UsersList callUser={initCall} />
+      <Box mt={2} mb={1}>
+        <Card variant="outlined">
+          <CardHeader title="User Status" />
+          <video
+            ref={videoRef}
+            onCanPlay={handleCanPlay}
+            playsInline
+            muted
+            width={"100%"}
+          />
+          <CardContent>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleDetectFaces}
+            >
+              Predict
+            </Button>
+          </CardContent>
+        </Card>
+      </Box>
+
+      <UsersList callUser={handleClickUser} />
       {isCalling && <IndefiniteLoading message="isCalling" />}
-      <RoomDialog handleClose={handleClose} open={open}>
-        <VideoStream muted={true} stream={localVideoStream} />
+      <RoomDialog handleClose={handleDialogClose} open={isDialogOpen}>
+        <Box>Call User</Box>
       </RoomDialog>
     </>
   )
