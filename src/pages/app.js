@@ -56,8 +56,8 @@ const IndexPage = ({ location }) => {
       <Router>
         <AppPageComponent path="/app" />
         <SigninPageComponent path="/app/signin" />
-        <UsersPage path="/app/users" />
         <AccountPage path="/app/account" />
+        <UsersPage path="/app/users" />
         <TreePageComponent path="/app/tree" />
         <ServicePage path="/app/service" />
         {/* <PrivateRouteComponent path="/app" component={AppPageComponent} /> */}

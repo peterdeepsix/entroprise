@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react"
+import Loadable from "@loadable/component"
 
 import { makeStyles } from "@material-ui/core/styles"
 import {
@@ -9,6 +10,13 @@ import {
   CardContent,
 } from "@material-ui/core"
 import CloseIcon from "@material-ui/icons/Close"
+
+import IndefiniteLoading from "src/components/Loading/IndefiniteLoading"
+import { Room } from "twilio-video"
+
+const RoomDialog = Loadable(() => import("./RoomDialog"), {
+  fallback: <IndefiniteLoading message="RoomDialog" />,
+})
 
 const useStyles = makeStyles(theme => ({
   root: {},
@@ -21,36 +29,13 @@ const ServicePageComponent = () => {
     <>
       <Box mt={2} mb={1}>
         <Card variant="outlined">
-          <CardHeader title="Channels" />
+          <CardHeader title="Rooms" />
           <CardContent>
-            <Typography>asd</Typography>
+            <Typography>Rooms</Typography>
           </CardContent>
         </Card>
       </Box>
-      <Box mt={2} mb={1}>
-        <Card variant="outlined">
-          <CardHeader title="Users" />
-          <CardContent>
-            <Typography>asd</Typography>
-          </CardContent>
-        </Card>
-      </Box>
-      <Box mt={2} mb={1}>
-        <Card variant="outlined">
-          <CardHeader title="Messages" />
-          <CardContent>
-            <Typography>asd</Typography>
-          </CardContent>
-        </Card>
-      </Box>
-      <Box mt={2} mb={1}>
-        <Card variant="outlined">
-          <CardHeader title="Credentials" />
-          <CardContent>
-            <Typography>asd</Typography>
-          </CardContent>
-        </Card>
-      </Box>
+      <RoomDialog />
     </>
   )
 }
