@@ -9,7 +9,7 @@ import {
   BottomNavigationAction,
 } from "@material-ui/core"
 
-import PeopleAltOutlinedIcon from "@material-ui/icons/PeopleAltOutlined"
+import VisibilityOutlined from "@material-ui/icons/VisibilityOutlined"
 import NaturePeopleOutlinedIcon from "@material-ui/icons/NaturePeopleOutlined"
 import ForumOutlinedIcon from "@material-ui/icons/ForumOutlined"
 
@@ -48,18 +48,18 @@ const LowerNavigation = ({ location }) => {
         onChange={handleChange}
       >
         <BottomNavigationAction
-          value="/app/users"
-          label="User List"
-          icon={<PeopleAltOutlinedIcon />}
+          value="/app/tensorflow"
+          label="Tensor Flow"
+          icon={<VisibilityOutlined />}
         />
         <BottomNavigationAction
           value="/app/tree"
-          label="Tree Graph"
+          label="Tree Directory"
           icon={<NaturePeopleOutlinedIcon />}
         />
         <BottomNavigationAction
           value="/app/service"
-          label="Service"
+          label="Video Service"
           icon={<ForumOutlinedIcon />}
         />
       </BottomNavigation>

@@ -41,8 +41,8 @@ const AccountPage = Loadable(() => import("src/containers/AccountPage"), {
   fallback: <IndefiniteLoading message="AccountPage" />,
 })
 
-const UsersPage = Loadable(() => import("src/containers/UsersPage"), {
-  fallback: <IndefiniteLoading message="UsersPage" />,
+const TensorFlowPage = Loadable(() => import("src/containers/TensorFlowPage"), {
+  fallback: <IndefiniteLoading message="TensorFlowPage" />,
 })
 
 const ServicePage = Loadable(() => import("src/containers/ServicePage"), {
@@ -57,7 +57,7 @@ const IndexPage = ({ location }) => {
         <AppPageComponent path="/app" />
         <SigninPageComponent path="/app/signin" />
         <AccountPage path="/app/account" />
-        <UsersPage path="/app/users" />
+        <TensorFlowPage path="/app/tensorflow" />
         <TreePageComponent path="/app/tree" />
         <ServicePage path="/app/service" />
         {/* <PrivateRouteComponent path="/app" component={AppPageComponent} /> */}

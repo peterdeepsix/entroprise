@@ -5,15 +5,15 @@ import { Box } from "@material-ui/core"
 
 import IndefiniteLoading from "src/components/loading/indefiniteLoading"
 
-const WebRTC = Loadable(() => import("./WebRTC"), {
-  fallback: <IndefiniteLoading message="WebRTC" />,
+const TensorFlow = Loadable(() => import("./TensorFlow"), {
+  fallback: <IndefiniteLoading message="TensorFlow" />,
 })
 
 const UsersPageComponent = ({ user }) => {
   return (
     <>
       <Box mt={2} mb={1}>
-        <WebRTC user={user} />
+        <TensorFlow user={user} />
       </Box>
     </>
   )

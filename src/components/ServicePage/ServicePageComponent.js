@@ -18,17 +18,26 @@ const VideoChat = Loadable(() => import("./VideoChat"), {
   fallback: <IndefiniteLoading message="VideoChat" />,
 })
 
+const UsersList = Loadable(() => import("./UsersList"), {
+  fallback: <IndefiniteLoading message="UsersList" />,
+})
+
 const useStyles = makeStyles(theme => ({
   root: {},
 }))
+
+const handleClickUser = () => {
+  console.log("call user")
+}
 
 const ServicePageComponent = ({ user }) => {
   const classes = useStyles()
 
   return (
-    <>
+    <Box mt={2} mb={10}>
       <VideoChat user={user} />
-    </>
+      <UsersList handleClickUser={handleClickUser} />
+    </Box>
   )
 }
 export default ServicePageComponent

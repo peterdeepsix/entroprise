@@ -10,10 +10,10 @@ import CloseIcon from "@material-ui/icons/Close"
 
 import IndefiniteLoading from "src/components/Loading/IndefiniteLoading"
 
-const UsersPageComponent = Loadable(
-  () => import("src/components/UsersPage/UsersPageComponent"),
+const TensorFlowPageComponent = Loadable(
+  () => import("src/components/TensorFlowPage/TensorFlowPageComponent"),
   {
-    fallback: <IndefiniteLoading message="UsersPage" />,
+    fallback: <IndefiniteLoading message="TensorFlowPageComponent" />,
   }
 )
 
@@ -41,8 +41,8 @@ const UsersPage = () => {
 
   return (
     <Container className={classes.root} maxWidth="sm">
-      {user && <UsersPageComponent user={user} />}
-      {loading && <IndefiniteLoading message="UserData" />}
+      {user && <TensorFlowPageComponent user={user} />}
+      {loading && <IndefiniteLoading message="TensorFlow" />}
       <Snackbar
         anchorOrigin={{
           vertical: "top",
