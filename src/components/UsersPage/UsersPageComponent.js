@@ -9,11 +9,11 @@ const WebRTC = Loadable(() => import("./WebRTC"), {
   fallback: <IndefiniteLoading message="WebRTC" />,
 })
 
-const UsersPageComponent = () => {
+const UsersPageComponent = ({ user }) => {
   return (
     <>
       <Box mt={2} mb={1}>
-        <WebRTC />
+        <WebRTC user={user} />
       </Box>
     </>
   )

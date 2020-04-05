@@ -76,9 +76,10 @@ exports.token = functions.https.onRequest((req, res) => {
     return token
   }
 
-  const identity = req.query.identity
-  const roomName = req.query.roomName
+  const identity = req.body.identity
+  const roomName = req.body.roomName
   const token = videoToken(identity, roomName)
   console.log(`issued token for ${identity} in room ${roomName}`)
+  console.log(`token ${token}`)
   sendTokenResponse(token, res)
 })

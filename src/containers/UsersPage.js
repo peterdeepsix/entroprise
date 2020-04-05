@@ -41,7 +41,7 @@ const UsersPage = () => {
 
   return (
     <Container className={classes.root} maxWidth="sm">
-      {user && <UsersPageComponent />}
+      {user && <UsersPageComponent user={user} />}
       {loading && <IndefiniteLoading message="UserData" />}
       <Snackbar
         anchorOrigin={{

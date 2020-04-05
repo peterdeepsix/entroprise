@@ -20,14 +20,11 @@ import {
   CardHeader,
   CardActions,
   IconButton,
-  List,
-  ListItem,
-  ListItemSecondaryAction,
-  ListItemText,
-  ListItemAvatar,
-  Avatar,
-  CircularProgress,
+  ExpansionPanel,
+  ExpansionPanelSummary,
+  ExpansionPanelDetails,
 } from "@material-ui/core"
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore"
 
 import IndefiniteLoading from "src/components/loading/indefiniteLoading"
 import { set } from "mobx"
@@ -45,12 +42,19 @@ const LocalTracks = Loadable(() => import("./LocalTracks"), {
 })
 
 const useStyles = makeStyles(theme => ({
+  root: {
+    width: "100%",
+  },
+  heading: {
+    fontSize: theme.typography.pxToRem(15),
+    fontWeight: theme.typography.fontWeightRegular,
+  },
   video: { width: "100%" },
 }))
 
 const constraints = { video: true, audio: false }
 
-const WebRTC = () => {
+const WebRTC = ({ user }) => {
   const classes = useStyles()
 
   const [isPredicting, setIsPredicting] = useState(false)
@@ -99,30 +103,38 @@ const WebRTC = () => {
       <Box mt={2} mb={1}>
         <Card variant="outlined">
           <CardHeader title="User Status" />
-          {stream && (
-            <>
-              <video
-                className={classes.video}
-                ref={videoRef}
-                autoPlay
-                playsInline
-                muted
-              />
-              <ReactInterval
-                timeout={1000}
-                enabled={true}
-                callback={handleDetectFaces}
-              />
-            </>
-          )}
 
           <CardContent>
-            <Box mt={2} mb={1}>
-              <Typography>
-                Confidence User is Online:
-                {confidenceScore && <> {confidenceScore.toFixed(2) * 100}%</>}
-              </Typography>
-            </Box>
+            <ExpansionPanel>
+              <ExpansionPanelSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="panel-content"
+                id="panel-header"
+              >
+                <Typography className={classes.heading}>
+                  Confidence {user.displayName} is Online:
+                  {confidenceScore && <> {confidenceScore.toFixed(2) * 100}%</>}
+                </Typography>
+              </ExpansionPanelSummary>
+              <ExpansionPanelDetails>
+                {stream && (
+                  <>
+                    <video
+                      className={classes.video}
+                      ref={videoRef}
+                      autoPlay
+                      playsInline
+                      muted
+                    />
+                    <ReactInterval
+                      timeout={1000}
+                      enabled={true}
+                      callback={handleDetectFaces}
+                    />
+                  </>
+                )}
+              </ExpansionPanelDetails>
+            </ExpansionPanel>
           </CardContent>
         </Card>
       </Box>

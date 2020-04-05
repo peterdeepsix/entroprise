@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react"
 import Video from "twilio-video"
 import Participant from "./Participant"
 
+import { Box, Button, Card, CardHeader, CardContent } from "@material-ui/core"
+
 const Room = ({ roomName, token, handleLogout }) => {
   const [room, setRoom] = useState(null)
   const [participants, setParticipants] = useState([])
@@ -48,22 +50,39 @@ const Room = ({ roomName, token, handleLogout }) => {
   ))
 
   return (
-    <div className="room">
-      <h2>Room: {roomName}</h2>
-      <button onClick={handleLogout}>Log out</button>
-      <div className="local-participant">
-        {room ? (
-          <Participant
-            key={room.localParticipant.sid}
-            participant={room.localParticipant}
-          />
-        ) : (
-          ""
-        )}
-      </div>
-      <h3>Remote Participants</h3>
-      <div className="remote-participants">{remoteParticipants}</div>
-    </div>
+    <>
+      <Box mt={2} mb={1}>
+        <Card variant="outlined">
+          <CardHeader title={`Room: ${roomName}`} />
+          <CardContent>
+            <Button variant="contained" color="primary" onClick={handleLogout}>
+              Exit Room
+            </Button>
+          </CardContent>
+        </Card>
+      </Box>
+      <Box mt={2} mb={1}>
+        <Card variant="outlined">
+          <CardHeader title="Local Participant" />
+          <CardContent>
+            {room ? (
+              <Participant
+                key={room.localParticipant.sid}
+                participant={room.localParticipant}
+              />
+            ) : (
+              ""
+            )}
+          </CardContent>
+        </Card>
+      </Box>
+      <Box mt={2} mb={1}>
+        <Card variant="outlined">
+          <CardHeader title="Remote Participants" />
+          <CardContent>{remoteParticipants}</CardContent>
+        </Card>
+      </Box>
+    </>
   )
 }
 

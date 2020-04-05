@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from "react"
 
+import { Typography } from "@material-ui/core"
+
 const Participant = ({ participant }) => {
   const [videoTracks, setVideoTracks] = useState([])
   const [audioTracks, setAudioTracks] = useState([])
@@ -63,11 +65,11 @@ const Participant = ({ participant }) => {
   }, [audioTracks])
 
   return (
-    <div className="participant">
-      <h3>{participant.identity}</h3>
-      <video ref={videoRef} autoPlay={true} />
+    <>
+      <Typography>{participant.identity}</Typography>
+      <video width="100%" ref={videoRef} autoPlay={true} />
       <audio ref={audioRef} autoPlay={true} muted={true} />
-    </div>
+    </>
   )
 }
 

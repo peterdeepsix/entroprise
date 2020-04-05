@@ -16,17 +16,21 @@ const Lobby = ({ roomName, handleRoomNameChange, handleSubmit }) => {
         <Card variant="outlined">
           <CardHeader title="Connect To A Room" />
           <CardContent>
-            <TextField
-              type="text"
-              id="room"
-              label="Room Name"
-              value={roomName}
-              onChange={handleRoomNameChange}
-              required
-            />
-            <Button variant="contained" color="primary" type="submit">
-              Connect To Room
-            </Button>
+            <Box mt={2} mb={1}>
+              <TextField
+                type="text"
+                id="room"
+                label="Room Name"
+                value={roomName}
+                onChange={handleRoomNameChange}
+                required
+              />
+            </Box>
+            <Box mt={2} mb={1}>
+              <Button variant="contained" color="primary" type="submit">
+                Connect To Room
+              </Button>
+            </Box>
           </CardContent>
         </Card>
       </Box>
