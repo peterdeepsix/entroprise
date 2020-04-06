@@ -4,12 +4,12 @@ import { useListVals } from "react-firebase-hooks/database"
 import { useCollection } from "react-firebase-hooks/firestore"
 import { GiftedChat } from "react-web-gifted-chat"
 
-import { Box, Typography } from "@material-ui/core"
+import { Box, Card, CardHeader, CardContent } from "@material-ui/core"
 
 import { makeStyles } from "@material-ui/core/styles"
 
 const useStyles = makeStyles((theme) => ({
-  root: { height: 300 },
+  chat: { height: 300 },
 }))
 
 const Channel = ({ user }) => {
@@ -40,15 +40,24 @@ const Channel = ({ user }) => {
   }
 
   return (
-    <>
-      <Box className={classes.root}>
+    <Card variant="outlined">
+      <CardHeader title="Channel Name" />
+      {/* <CardContent> */}
+      {console.log(user)}
+      <Box className={classes.chat} mx={2}>
         <GiftedChat
+          showUserAvatar
           messages={messages.slice().reverse()}
           onSend={(messages) => onSend(messages)}
-          user={user}
+          user={{
+            id: user.uid,
+            name: user.displayName,
+            avatar: user.photoURL,
+          }}
         />
       </Box>
-    </>
+      {/* </CardContent> */}
+    </Card>
   )
 }
 export default Channel

@@ -17,7 +17,7 @@ const ServicePageComponent = Loadable(
   }
 )
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {},
 }))
 
@@ -28,7 +28,7 @@ const ServicePage = () => {
 
   const [open, setOpen] = useState(false)
 
-  const handleClose = reason => {
+  const handleClose = (reason) => {
     if (reason === "clickaway") {
       return
     }
@@ -40,7 +40,7 @@ const ServicePage = () => {
   }, [error])
 
   return (
-    <Container className={classes.root} maxWidth="sm">
+    <Container className={classes.root} disableGutters maxWidth="sm">
       {user && <ServicePageComponent user={user} />}
       {loading && <IndefiniteLoading message="UserData" />}
       <Snackbar

@@ -1,9 +1,17 @@
-import React from "react"
+import React, { useRef } from "react"
 import Loadable from "@loadable/component"
 import firebase from "gatsby-plugin-firebase"
 import { useCollection } from "react-firebase-hooks/firestore"
+import {
+  SnapList,
+  SnapItem,
+  useVisibleElements,
+  useScroll,
+  useDragToScroll,
+  isTouchDevice,
+} from "react-snaplist-carousel"
 
-import { Card, CardHeader, CardContent } from "@material-ui/core"
+import { Box } from "@material-ui/core"
 
 import { makeStyles } from "@material-ui/core/styles"
 
@@ -15,24 +23,113 @@ const Channel = Loadable(() => import("./Channel"), {
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    width: "100%",
+    // width: "100%",
+  },
+  box: { width: 370 },
+  item: {
+    // height: 1000,
+    // width: "100%",
+    // display: "flex",
+    // alignItems: "center",
+    // justifyContent: "center",
   },
 }))
 
-const Channels = () => {
-  const classes = useStyles()
+const MyItem = ({ onClick, children, visible }) => (
+  <div
+    style={{
+      // width: "80vw",
+      cursor: visible ? "default" : "pointer",
+    }}
+    onClick={onClick}
+  >
+    {children}
+  </div>
+)
 
-  const [users] = useCollection(firebase.firestore().collection("users"), {
-    snapshotListenOptions: { includeMetadataChanges: true },
-  })
+const Channels = ({ user }) => {
+  const classes = useStyles()
+  const snapList = useRef(null)
+
+  const visible = useVisibleElements(
+    { debounce: 10, ref: snapList },
+    ([element]) => element
+  )
+  const goToSnapItem = useScroll({ ref: snapList })
+  const isDragging = useDragToScroll({ ref: snapList })
 
   return (
-    <Card variant="outlined">
-      <CardHeader title="Channels" />
-      <CardContent>
-        <Channel />
-      </CardContent>
-    </Card>
+    <>
+      <SnapList ref={snapList} direction="horizontal">
+        <SnapItem snapAlign="center">
+          <MyItem
+            className={classes.item}
+            onClick={() => goToSnapItem(0)}
+            visible={visible === 0}
+          >
+            <Box pl={2} pr={2} className={classes.box}>
+              <Channel user={user} />
+            </Box>
+          </MyItem>
+        </SnapItem>
+        <SnapItem snapAlign="center">
+          <MyItem onClick={() => goToSnapItem(1)} visible={visible === 1}>
+            <Box pr={2} className={classes.box}>
+              <Channel user={user} />
+            </Box>
+          </MyItem>
+        </SnapItem>
+        <SnapItem snapAlign="center">
+          <MyItem onClick={() => goToSnapItem(2)} visible={visible === 2}>
+            <Box pr={2} className={classes.box}>
+              <Channel user={user} />
+            </Box>
+          </MyItem>
+        </SnapItem>
+        <SnapItem snapAlign="center">
+          <MyItem onClick={() => goToSnapItem(3)} visible={visible === 3}>
+            <Box pr={2} className={classes.box}>
+              <Channel user={user} />
+            </Box>
+          </MyItem>
+        </SnapItem>
+        <SnapItem snapAlign="center">
+          <MyItem onClick={() => goToSnapItem(4)} visible={visible === 4}>
+            <Box pr={2} className={classes.box}>
+              <Channel user={user} />
+            </Box>
+          </MyItem>
+        </SnapItem>
+        <SnapItem snapAlign="center">
+          <MyItem onClick={() => goToSnapItem(1)} visible={visible === 1}>
+            <Box pr={2} className={classes.box}>
+              <Channel user={user} />
+            </Box>
+          </MyItem>
+        </SnapItem>
+        <SnapItem snapAlign="center">
+          <MyItem onClick={() => goToSnapItem(2)} visible={visible === 2}>
+            <Box pr={2} className={classes.box}>
+              <Channel user={user} />
+            </Box>
+          </MyItem>
+        </SnapItem>
+        <SnapItem snapAlign="center">
+          <MyItem onClick={() => goToSnapItem(3)} visible={visible === 3}>
+            <Box pr={2} className={classes.box}>
+              <Channel user={user} />
+            </Box>
+          </MyItem>
+        </SnapItem>
+        <SnapItem snapAlign="center">
+          <MyItem onClick={() => goToSnapItem(4)} visible={visible === 4}>
+            <Box pr={2} className={classes.box}>
+              <Channel user={user} />
+            </Box>
+          </MyItem>
+        </SnapItem>
+      </SnapList>
+    </>
   )
 }
 export default Channels
