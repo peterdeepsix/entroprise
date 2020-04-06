@@ -9,7 +9,6 @@ module.exports = {
     author: `Peter Arnold`,
   },
   plugins: [
-    `gatsby-plugin-react-native-web`,
     "gatsby-plugin-root-import",
     `gatsby-plugin-react-helmet`,
     `gatsby-transformer-sharp`,
