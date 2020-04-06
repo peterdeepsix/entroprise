@@ -42,8 +42,9 @@ typings/
 # Optional npm cache directory
 .npm
 
-# Optional ex[po
+# Optional firebase expo
 .expo/
+.firebase/
 
 # Optional eslint cache
 .eslintcache
