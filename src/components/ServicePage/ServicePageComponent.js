@@ -19,7 +19,7 @@ const ServicePageComponent = ({ user }) => {
 
   return (
     <Box mt={2} mb={10}>
-      <Channels />
+      <Channels user={user} />
     </Box>
   )
 }

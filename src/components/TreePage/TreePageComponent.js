@@ -28,7 +28,7 @@ const TreeChip = Loadable(() => import("./TreeChip"), {
   fallback: <IndefiniteLoading message="TreeChip" />,
 })
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
     height: "100vh",
@@ -108,7 +108,6 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 const TreePageComponent = () => {
   const classes = useStyles()
-  // const [values, loading, error] = useListVals(firebase.database().ref("users"))
 
   const [translate, setTranslate] = useState(null)
   const [open, setOpen] = React.useState(false)
