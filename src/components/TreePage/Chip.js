@@ -5,30 +5,30 @@ import { makeStyles } from "@material-ui/core/styles"
 import { Avatar, Chip } from "@material-ui/core"
 import CallOutlinedIcon from "@material-ui/icons/CallOutlined"
 
-const useStyles = makeStyles(theme => ({}))
+const useStyles = makeStyles((theme) => ({
+  chip: {
+    width: 128,
+  },
+}))
 
-const TreeChip = ({ nodeData, handleClickOpen }) => {
+const TreeChip = ({ name, color, variant }) => {
   const classes = useStyles()
-  const { name, attributes } = nodeData
-  const { isOnline, isAvailable } = attributes
-  const [color, setColor] = useState("default")
+  const isOnline = true
+  const isAvailable = true
 
-  useEffect(() => {
-    if (isOnline === "true") {
-      setColor("secondary")
-    }
-    if (isAvailable === "true") {
-      setColor("primary")
-    }
-  }, [])
+  const handleClickOpen = () => {
+    console.info("nodeData")
+  }
 
   const handleDelete = () => {
-    console.info(nodeData)
+    console.info("nodeData")
   }
 
   return (
     <>
       <Chip
+        variant={variant}
+        className={classes.chip}
         color={color}
         avatar={<Avatar alt="Parent" />}
         label={name}

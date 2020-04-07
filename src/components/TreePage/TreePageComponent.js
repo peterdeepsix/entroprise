@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react"
-import WebCola from "react-cola"
+import { Provider } from "react-dims"
 import firebase from "gatsby-plugin-firebase"
 import { useListVals } from "react-firebase-hooks/database"
 
@@ -29,7 +29,7 @@ const Tree = Loadable(() => import("./Tree"), {
 })
 
 const useStyles = makeStyles((theme) => ({
-  root: {},
+  root: { height: "100vh" },
 }))
 
 const TreePageComponent = () => {
@@ -38,8 +38,10 @@ const TreePageComponent = () => {
   useEffect(() => {}, [])
 
   return (
-    <Box mt={2} mb={10}>
-      <Tree />
+    <Box className={classes.root}>
+      <Provider>
+        <Tree />
+      </Provider>
     </Box>
   )
 }
