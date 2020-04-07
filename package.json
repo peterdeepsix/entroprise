@@ -6,6 +6,7 @@
   "author": "Peter Arnold <peter@deepsixdesign.com>",
   "dependencies": {
     "@loadable/component": "^5.12.0",
+    "@mapbox/geo-viewport": "^0.4.0",
     "@material-ui/core": "^4.9.9",
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.48",
@@ -33,6 +34,7 @@
     "gatsby-source-filesystem": "^2.2.2",
     "gatsby-transformer-sharp": "^2.4.4",
     "gsap": "^3.2.6",
+    "immutable": "^4.0.0-rc.12",
     "logrocket": "^1.0.7",
     "mapbox-gl": "^1.9.1",
     "material-table": "^1.57.2",
