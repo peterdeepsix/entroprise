@@ -30,12 +30,13 @@ const SigninPageComponent = Loadable(
   }
 )
 
-const TreePageComponent = Loadable(
-  () => import("src/components/TreePage/TreePageComponent"),
-  {
-    fallback: <IndefiniteLoading message="TreePageComponent" />,
-  }
-)
+const ListPage = Loadable(() => import("src/containers/ListPage"), {
+  fallback: <IndefiniteLoading message="ListPage" />,
+})
+
+const TreePage = Loadable(() => import("src/containers/TreePage"), {
+  fallback: <IndefiniteLoading message="TreePage" />,
+})
 
 const MapPage = Loadable(() => import("src/containers/MapPage"), {
   fallback: <IndefiniteLoading message="MapPage" />,
@@ -61,9 +62,10 @@ const IndexPage = ({ location }) => {
         <AppPageComponent path="/app" />
         <SigninPageComponent path="/app/signin" />
         <AccountPage path="/app/account" />
+        <ListPage path="/app/list" />
+        <TreePage path="/app/tree" />
         <MapPage path="/app/map" />
         <TensorFlowPage path="/app/tensorflow" />
-        <TreePageComponent path="/app/tree" />
         <ServicePage path="/app/service" />
         {/* <PrivateRouteComponent path="/app" component={AppPageComponent} /> */}
       </Router>

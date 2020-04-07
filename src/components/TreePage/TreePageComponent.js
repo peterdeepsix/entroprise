@@ -125,56 +125,9 @@ const TreePageComponent = () => {
   }
 
   return (
-    <>
-      <Container disableGutters maxWidth="lg">
-        <div className={classes.root} ref={treeRef}>
-          <Tree
-            collapsible={false}
-            allowForeignObjects
-            data={treeData}
-            orientation={"vertical"}
-            nodeLabelComponent={{
-              render: <TreeChip handleClickOpen={handleClickOpen} />,
-              foreignObjectWrapper: {
-                y: -16,
-                x: -16,
-                width: "100%",
-              },
-            }}
-          />
-        </div>
-      </Container>
-      <Dialog
-        fullScreen
-        open={open}
-        onClose={handleClose}
-        TransitionComponent={Transition}
-      >
-        <AppBar className={classes.appBar}>
-          <Toolbar>
-            <IconButton
-              edge="start"
-              color="inherit"
-              onClick={handleClose}
-              aria-label="close"
-            >
-              <CloseIcon />
-            </IconButton>
-            <Typography variant="h6" className={classes.title}>
-              Video Call
-            </Typography>
-            <Button
-              autoFocus
-              color="inherit"
-              onClick={handleClose}
-              startIcon={<CallEndOutlinedIcon />}
-            >
-              Hangup
-            </Button>
-          </Toolbar>
-        </AppBar>
-      </Dialog>
-    </>
+    <Box mt={2} mb={10}>
+      <Typography> Tree</Typography>
+    </Box>
   )
 }
 export default TreePageComponent
