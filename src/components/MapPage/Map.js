@@ -91,6 +91,15 @@ const Map = ({
 
     map.addControl(new mapboxgl.NavigationControl(), "top-right")
 
+    map.addControl(
+      new mapboxgl.GeolocateControl({
+        positionOptions: {
+          enableHighAccuracy: true,
+        },
+        trackUserLocation: true,
+      })
+    )
+
     if (styles.length > 1) {
       map.addControl(
         new StyleSelector({
@@ -128,15 +137,17 @@ const Map = ({
   // refs to share objects or state between hooks.
 
   return (
-    <Wrapper width={width} height={height}>
-      <div ref={mapNode} style={{ width: "100%", height: "100%" }} />
-      {/* <StyleSelector map={mapRef.current} styles={styles} token={mapboxToken} /> */}
-      {/* <Typography>Location Data: {user.displayName}</Typography>
+    <>
+      <Typography>Location Data: {user.displayName}</Typography>
       <Typography>Latitude: {latitude}</Typography>
       <Typography>Longitude: {longitude}</Typography>
       <Typography>Accuracy: {accuracy}</Typography>
-      <Typography>Timestamp: {timestamp}</Typography> */}
-    </Wrapper>
+      <Typography>Timestamp: {timestamp}</Typography>
+      <Wrapper width={width} height={height}>
+        <div ref={mapNode} style={{ width: "100%", height: "60vh" }} />
+        {/* <StyleSelector map={mapRef.current} styles={styles} token={mapboxToken} /> */}
+      </Wrapper>
+    </>
   )
 }
 

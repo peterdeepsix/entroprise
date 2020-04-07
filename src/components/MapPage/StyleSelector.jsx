@@ -8,7 +8,7 @@ const Wrapper = ({ children, onMouseEnter, onMouseLeave }) => (
   </div>
 )
 
-const Basemap = ({ size, src, onClick }) => <div>asd</div>
+const Basemap = ({ size, src, onClick }) => <img />
 
 const getSrc = ({ styleID, z, x, y, token }) =>
   `https://api.mapbox.com/styles/v1/mapbox/${styleID}/tiles/256/${z}/${x}/${y}?access_token=${token}`
