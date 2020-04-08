@@ -40,7 +40,7 @@ const ListPage = () => {
   }, [userError])
 
   return (
-    <Container className={classes.root} disableGutters maxWidth="sm">
+    <Container className={classes.root} maxWidth="sm">
       {user && <ListPageComponent user={user} />}
       {userLoading && <IndefiniteLoading message="UserData" />}
       <Snackbar

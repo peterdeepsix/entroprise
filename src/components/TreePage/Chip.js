@@ -7,7 +7,10 @@ import CallOutlinedIcon from "@material-ui/icons/CallOutlined"
 
 const useStyles = makeStyles((theme) => ({
   chip: {
-    width: 128,
+    width: theme.spacing(16),
+    height: theme.spacing(4),
+    zIndex: 10,
+    padding: theme.spacing(1),
   },
 }))
 

@@ -3,7 +3,7 @@ import { withContext } from "react-dims"
 import WebCola from "react-cola"
 import { Line } from "react-lineto"
 import { makeStyles } from "@material-ui/core/styles"
-import { Box, Card, CardContent } from "@material-ui/core"
+import { Typography, Card, CardHeader } from "@material-ui/core"
 
 import Loadable from "@loadable/component"
 import IndefiniteLoading from "src/components/Loading/IndefiniteLoading"
@@ -12,11 +12,16 @@ const Chip = Loadable(() => import("./Chip"), {
   fallback: <IndefiniteLoading message="Chip" />,
 })
 
-const useStyles = makeStyles((theme) => ({}))
+const useStyles = makeStyles((theme) => ({
+  caption: {
+    paddingLeft: theme.spacing(2),
+  },
+}))
 
 const Tree = ({ dims }) => {
   console.log("tree")
   console.log(dims)
+  const classes = useStyles()
   return (
     <>
       <WebCola
@@ -31,21 +36,29 @@ const Tree = ({ dims }) => {
                   style={{
                     position: "absolute",
                     left: x,
-                    top: y,
-                    width,
-                    height,
+                    top: y + 48,
+                    width: width,
+                    height: height,
                     zIndex: -2,
                     borderRadius: 16,
+                    marginBottom: 0,
                     backgroundColor: "none",
                   }}
                 >
+                  <Typography
+                    className={classes.caption}
+                    variant="caption"
+                    display="block"
+                    gutterBottom
+                  >
+                    Room Name
+                  </Typography>
                   <div
                     style={{
                       position: "relative",
                       width: "100%",
                       height: "100%",
                       zIndex: -3,
-                      borderWidth: 16,
                       borderColor: "rgba(0, 0, 0, .12)",
                       borderRadius: 16,
                       backgroundColor: "rgba(0, 0, 0, .12)",
@@ -61,9 +74,9 @@ const Tree = ({ dims }) => {
                 <Line
                   key={i}
                   x0={x}
-                  y0={y}
+                  y0={y + 72}
                   x1={x2}
-                  y1={y2}
+                  y1={y2 + 72}
                   borderColor="#219a49"
                   zIndex={-1}
                 />
@@ -75,9 +88,13 @@ const Tree = ({ dims }) => {
                 <div
                   style={{
                     position: "absolute",
-                    left: x + 12 - width * 0.5,
-                    top: y + 12 - height * 0.5,
+                    left: x - width * 0.5,
+                    top: y + 72 - height * 0.5,
                     width,
+                    paddingTop: 8,
+                    paddingRight: 16,
+                    paddingLeft: 16,
+                    paddingBottom: 8,
                     height,
                   }}
                 >
@@ -89,41 +106,41 @@ const Tree = ({ dims }) => {
         nodes={[
           {
             width: 150,
-            height: 56,
+            height: 48,
             name: "Steve Addington",
             color: "primary",
           },
           {
             width: 150,
-            height: 56,
+            height: 48,
             name: "Mike Nereson",
           },
           {
             width: 150,
-            height: 56,
+            height: 48,
             name: "Peter Arnold",
             color: "primary",
           },
           {
             width: 150,
-            height: 56,
+            height: 48,
             name: "Dave's #2",
             color: "primary",
           },
           {
             width: 150,
-            height: 56,
+            height: 48,
             name: "Dave Arnold",
             color: "primary",
           },
           {
             width: 150,
-            height: 56,
+            height: 48,
             name: "Andrew Nelligan",
           },
           {
             width: 150,
-            height: 56,
+            height: 48,
             name: "John Arnold",
           },
         ]}
@@ -136,11 +153,7 @@ const Tree = ({ dims }) => {
           { source: 2, target: 0 },
           { source: 0, target: 5 },
         ]}
-        groups={[
-          { leaves: [0], groups: [1] },
-          { leaves: [1, 2] },
-          { leaves: [3, 4] },
-        ]}
+        groups={[{ leaves: [0, 5] }, { leaves: [1, 2] }, { leaves: [3, 4] }]}
         width={dims.width}
         height={dims.height}
       />
