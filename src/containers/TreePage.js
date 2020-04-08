@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react"
-import Loadable from "@loadable/component"
 
 import firebase from "gatsby-plugin-firebase"
 import { useAuthState } from "react-firebase-hooks/auth"
@@ -8,8 +7,8 @@ import { makeStyles } from "@material-ui/core/styles"
 import CloseIcon from "@material-ui/icons/Close"
 import { Container, Snackbar, IconButton } from "@material-ui/core"
 
+import Loadable from "@loadable/component"
 import IndefiniteLoading from "src/components/Loading/IndefiniteLoading"
-
 const TreePageComponent = Loadable(
   () => import("src/components/TreePage/TreePageComponent"),
   {

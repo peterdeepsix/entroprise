@@ -15,7 +15,7 @@ import {
 
 import { makeStyles, withStyles } from "@material-ui/core/styles"
 
-const StyledBadge = withStyles(theme => ({
+const StyledBadge = withStyles((theme) => ({
   badge: {
     backgroundColor: "#44b700",
     color: "#44b700",
@@ -44,7 +44,7 @@ const StyledBadge = withStyles(theme => ({
   },
 }))(Badge)
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
   },
@@ -63,7 +63,7 @@ const UsersList = ({ handleClickUser }) => {
       <List className={classes.root}>
         {users && (
           <>
-            {users.docs.map(doc => {
+            {users.docs.map((doc) => {
               const data = doc.data()
               if (data.status) {
                 if (data.displayName == null && data.status.state == "offline")

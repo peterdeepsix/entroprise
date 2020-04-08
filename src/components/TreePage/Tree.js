@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react"
 import { withContext } from "react-dims"
 import WebCola from "react-cola"
 import { Line } from "react-lineto"
-import { makeStyles } from "@material-ui/core/styles"
+import { makeStyles, useTheme } from "@material-ui/core/styles"
 import { Typography, Card, CardHeader } from "@material-ui/core"
 
 import Loadable from "@loadable/component"
@@ -22,6 +22,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Tree = ({ dims }) => {
   const classes = useStyles()
+  const theme = useTheme()
   const nodeHeight = 32
   const nodeWidth = 144
   return (
@@ -41,7 +42,7 @@ const Tree = ({ dims }) => {
                     top: y,
                     width,
                     height,
-                    backgroundColor: "orange",
+                    backgroundColor: theme.palette.grey[400],
                     borderRadius: 16,
                     zIndex: -2,
                   }}
@@ -58,7 +59,7 @@ const Tree = ({ dims }) => {
                   y0={y}
                   x1={x2}
                   y1={y2}
-                  borderColor="blue"
+                  borderColor={theme.palette.divider}
                   zIndex={0}
                 />
               )
@@ -72,7 +73,7 @@ const Tree = ({ dims }) => {
                   top: y - height * 0.5,
                   width,
                   height,
-                  backgroundColor: "red",
+                  backgroundColor: theme.palette.primary.main,
                   borderRadius: 16,
                 }}
               >
