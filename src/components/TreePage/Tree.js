@@ -14,14 +14,16 @@ const Chip = Loadable(() => import("./Chip"), {
 
 const useStyles = makeStyles((theme) => ({
   caption: {
+    paddingTop: theme.spacing(1),
     paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(2),
   },
 }))
 
 const Tree = ({ dims }) => {
-  console.log("tree")
-  console.log(dims)
   const classes = useStyles()
+  const nodeHeight = 32
+  const nodeWidth = 144
   return (
     <>
       <WebCola
@@ -36,35 +38,14 @@ const Tree = ({ dims }) => {
                   style={{
                     position: "absolute",
                     left: x,
-                    top: y + 48,
-                    width: width,
-                    height: height,
-                    zIndex: -2,
+                    top: y,
+                    width,
+                    height,
+                    backgroundColor: "orange",
                     borderRadius: 16,
-                    marginBottom: 0,
-                    backgroundColor: "none",
+                    zIndex: -2,
                   }}
-                >
-                  <Typography
-                    className={classes.caption}
-                    variant="caption"
-                    display="block"
-                    gutterBottom
-                  >
-                    Room Name
-                  </Typography>
-                  <div
-                    style={{
-                      position: "relative",
-                      width: "100%",
-                      height: "100%",
-                      zIndex: -3,
-                      borderColor: "rgba(0, 0, 0, .12)",
-                      borderRadius: 16,
-                      backgroundColor: "rgba(0, 0, 0, .12)",
-                    }}
-                  ></div>
-                </div>
+                />
               )
             })}
             {layout.links().map(({ source, target }, i) => {
@@ -74,86 +55,83 @@ const Tree = ({ dims }) => {
                 <Line
                   key={i}
                   x0={x}
-                  y0={y + 72}
+                  y0={y}
                   x1={x2}
-                  y1={y2 + 72}
-                  borderColor="#219a49"
-                  zIndex={-1}
+                  y1={y2}
+                  borderColor="blue"
+                  zIndex={0}
                 />
               )
             })}
-            {layout
-              .nodes()
-              .map(({ x, y, width, height, name, color, variant }, i) => (
-                <div
-                  style={{
-                    position: "absolute",
-                    left: x - width * 0.5,
-                    top: y + 72 - height * 0.5,
-                    width,
-                    paddingTop: 8,
-                    paddingRight: 16,
-                    paddingLeft: 16,
-                    paddingBottom: 8,
-                    height,
-                  }}
-                >
-                  <Chip key={i} color={color} variant={variant} name={name} />
-                </div>
-              ))}
+            {layout.nodes().map(({ x, y, width, height, name }, i) => (
+              <div
+                key={i}
+                style={{
+                  position: "absolute",
+                  left: x - width * 0.5,
+                  top: y - height * 0.5,
+                  width,
+                  height,
+                  backgroundColor: "red",
+                  borderRadius: 16,
+                }}
+              >
+                {name}
+              </div>
+            ))}
           </>
         )}
         nodes={[
           {
-            width: 150,
-            height: 48,
-            name: "Steve Addington",
-            color: "primary",
+            width: nodeWidth,
+            height: nodeHeight,
+            name: "displayName",
           },
           {
-            width: 150,
-            height: 48,
-            name: "Mike Nereson",
+            width: nodeWidth,
+            height: nodeHeight,
+            name: "displayName",
           },
           {
-            width: 150,
-            height: 48,
-            name: "Peter Arnold",
-            color: "primary",
+            width: nodeWidth,
+            height: nodeHeight,
+            name: "displayName",
           },
           {
-            width: 150,
-            height: 48,
-            name: "Dave's #2",
-            color: "primary",
+            width: nodeWidth,
+            height: nodeHeight,
+            name: "displayName",
           },
           {
-            width: 150,
-            height: 48,
-            name: "Dave Arnold",
-            color: "primary",
+            width: nodeWidth,
+            height: nodeHeight,
+            name: "displayName",
           },
           {
-            width: 150,
-            height: 48,
-            name: "Andrew Nelligan",
+            width: nodeWidth,
+            height: nodeHeight,
+            name: "displayName",
           },
           {
-            width: 150,
-            height: 48,
-            name: "John Arnold",
+            width: nodeWidth,
+            height: nodeHeight,
+            name: "displayName",
           },
         ]}
         links={[
           { source: 1, target: 2 },
-          { source: 1, target: 4 },
           { source: 2, target: 3 },
           { source: 3, target: 4 },
           { source: 0, target: 1 },
           { source: 2, target: 0 },
+          { source: 3, target: 5 },
           { source: 0, target: 5 },
         ]}
-        groups={[{ leaves: [0, 5] }, { leaves: [1, 2] }, { leaves: [3, 4] }]}
+        groups={[
+          { leaves: [0], groups: [1] },
+          { leaves: [1, 2] },
+          { leaves: [3, 4] },
+        ]}
         width={dims.width}
         height={dims.height}
       />

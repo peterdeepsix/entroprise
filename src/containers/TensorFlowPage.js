@@ -17,7 +17,7 @@ const TensorFlowPageComponent = Loadable(
   }
 )
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {},
 }))
 
@@ -28,7 +28,7 @@ const UsersPage = () => {
 
   const [open, setOpen] = useState(false)
 
-  const handleClose = reason => {
+  const handleClose = (reason) => {
     if (reason === "clickaway") {
       return
     }

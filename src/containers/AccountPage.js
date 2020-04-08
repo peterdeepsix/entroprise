@@ -1,20 +1,6 @@
 import React, { useState, useEffect } from "react"
-import { navigate } from "gatsby"
-import Badge from "@material-ui/core/Badge"
-import Avatar from "@material-ui/core/Avatar"
-import List from "@material-ui/core/List"
-import ListItem from "@material-ui/core/ListItem"
-import ListItemText from "@material-ui/core/ListItemText"
-import ListItemAvatar from "@material-ui/core/ListItemAvatar"
-import { makeStyles, withStyles } from "@material-ui/core/styles"
 
-import { observer } from "mobx-react"
-import { useStore } from "mobx-store-provider"
-
-import firebase from "gatsby-plugin-firebase"
-import { useAuthState } from "react-firebase-hooks/auth"
-import { useObjectVal } from "react-firebase-hooks/database"
-
+import { makeStyles, useTheme } from "@material-ui/core/styles"
 import {
   Container,
   Box,
@@ -22,46 +8,81 @@ import {
   Card,
   CardContent,
   CardHeader,
-  Typography,
+  List,
+  ListItem,
+  ListItemText,
+  IconButton,
+  ListItemSecondaryAction,
+  Input,
+  InputLabel,
+  MenuItem,
+  Chip,
+  Select,
+  FormControl,
+  Checkbox,
 } from "@material-ui/core"
+import EditOutlinedIcon from "@material-ui/icons/EditOutlined"
 
-const StyledBadge = withStyles(theme => ({
-  badge: {
-    backgroundColor: "#44b700",
-    color: "#44b700",
-    boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
-    "&::after": {
-      position: "absolute",
-      top: 0,
-      left: 0,
-      width: "100%",
-      height: "100%",
-      borderRadius: "50%",
-      animation: "$ripple 1.2s infinite ease-in-out",
-      border: "1px solid currentColor",
-      content: '""',
-    },
-  },
-  "@keyframes ripple": {
-    "0%": {
-      transform: "scale(.8)",
-      opacity: 1,
-    },
-    "100%": {
-      transform: "scale(2.4)",
-      opacity: 0,
-    },
-  },
-}))(Badge)
+import firebase from "gatsby-plugin-firebase"
+import { useAuthState } from "react-firebase-hooks/auth"
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
   },
+  select: {},
+  formControl: {
+    width: "100%",
+  },
+  chips: {
+    display: "flex",
+    flexWrap: "wrap",
+  },
+  chip: {
+    margin: 2,
+  },
+  noLabel: {
+    marginTop: theme.spacing(3),
+  },
 }))
+
+const ITEM_HEIGHT = 48
+const ITEM_PADDING_TOP = 8
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+}
+
+const names = [
+  "Oliver Hansen",
+  "Van Henry",
+  "April Tucker",
+  "Ralph Hubbard",
+  "Omar Alexander",
+  "Carlos Abbott",
+  "Miriam Wagner",
+  "Bradley Wilkerson",
+  "Virginia Andrews",
+  "Kelly Snyder",
+]
+
+function getStyles(name, personName, theme) {
+  return {
+    fontWeight:
+      personName.indexOf(name) === -1
+        ? theme.typography.fontWeightRegular
+        : theme.typography.fontWeightMedium,
+  }
+}
 
 const AccountPage = () => {
   const classes = useStyles()
+  const theme = useTheme()
+  const [personName, setPersonName] = React.useState([])
   const [user, loading, error] = useAuthState(firebase.auth())
   const [isOnline, setIsOnline] = useState(false)
 
@@ -76,14 +97,14 @@ const AccountPage = () => {
     firebase
       .auth()
       .signInWithPopup(provider)
-      .then(result => {
+      .then((result) => {
         usersRef
           .doc(user.uid)
           .delete()
           .then(() => {
             console.log("User successfully deleted!")
           })
-          .catch(error => {
+          .catch((error) => {
             console.error("Error removing User: ", error)
           })
         usersRef.doc(result.user.uid).set(
@@ -105,81 +126,10 @@ const AccountPage = () => {
           { merge: true }
         )
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(error.code)
         console.log(error.message)
       })
-  }
-
-  const upgradeAccountWithGoogle = () => {
-    // user
-    //   .linkWithPopup(provider)
-    //   .then(result => {
-    //     user
-    //       .reauthenticateWithCredential(result.credential)
-    //       .then(result => {
-    //         usersRef
-    //           .doc(user.uid)
-    //           .delete()
-    //           .then(function() {
-    //             console.log("User successfully deleted!")
-    //           })
-    //           .catch(function(error) {
-    //             console.error("Error removing User: ", error)
-    //           })
-    //         usersRef.doc(result.user.uid).set(
-    //           {
-    //             displayName: result.user.displayName,
-    //             email: result.user.email,
-    //             emailVerified: result.user.emailVerified,
-    //             isAnonymous: result.user.isAnonymous,
-    //             phoneNumber: result.user.phoneNumber,
-    //             photoURL: result.user.photoURL,
-    //             providerId: result.user.providerId,
-    //             refreshToken: result.user.refreshToken,
-    //             uid: result.user.uid,
-    //             online: true,
-    //           },
-    //           { merge: true }
-    //         )
-    //       })
-    //       .catch(error => {
-    //         const errorCode = error.code
-    //         const errorMessage = error.message
-    //         if (errorCode === "auth/account-exists-with-different-credential") {
-    //           alert(errorMessage)
-    //         } else {
-    //         }
-    //       })
-    //   })
-    //   .catch(error => {
-    //     const errorCode = error.code
-    //     const errorMessage = error.message
-    //     if (errorCode === "auth/credential-already-in-use") {
-    //       firebase
-    //         .auth()
-    //         .signInWithPopup(provider)
-    //         .then(function(result) {
-    //           usersRef.doc(result.user.uid).set(
-    //             {
-    //               displayName: result.user.displayName,
-    //               email: result.user.email,
-    //               emailVerified: result.user.emailVerified,
-    //               isAnonymous: result.user.isAnonymous,
-    //               phoneNumber: result.user.phoneNumber,
-    //               photoURL: result.user.photoURL,
-    //               providerId: result.user.providerId,
-    //               refreshToken: result.user.refreshToken,
-    //               uid: result.user.uid,
-    //               online: true,
-    //             },
-    //             { merge: true }
-    //           )
-    //         })
-    //         .catch(function(error) {})
-    //     } else {
-    //     }
-    //   })
   }
 
   const signOut = () => {
@@ -190,12 +140,9 @@ const AccountPage = () => {
         .delete()
         .then(() => {
           console.log("User successfully deleted!")
-          firebase
-            .auth()
-            .signOut()
-            .then()
+          firebase.auth().signOut().then()
         })
-        .catch(error => {
+        .catch((error) => {
           console.error("Error removing User: ", error)
         })
     } else {
@@ -219,17 +166,27 @@ const AccountPage = () => {
           },
           { merge: true }
         )
-        .catch(error => {
+        .catch((error) => {
           console.log(error.code)
           console.log(error.message)
         })
-        .then(
-          firebase
-            .auth()
-            .signOut()
-            .then()
-        )
+        .then(firebase.auth().signOut().then())
     }
+  }
+
+  const handleChange = (event) => {
+    setPersonName(event.target.value)
+  }
+
+  const handleChangeMultiple = (event) => {
+    const { options } = event.target
+    const value = []
+    for (let i = 0, l = options.length; i < l; i += 1) {
+      if (options[i].selected) {
+        value.push(options[i].value)
+      }
+    }
+    setPersonName(value)
   }
 
   if (user)
@@ -257,23 +214,6 @@ const AccountPage = () => {
                 <>
                   <List className={classes.root} disablePadding>
                     <ListItem divider disableGutters>
-                      {/* {user.status.state == "online" && (
-                        <ListItemAvatar>
-                          <StyledBadge
-                            overlap="circle"
-                            anchorOrigin={{
-                              vertical: "bottom",
-                              horizontal: "right",
-                            }}
-                            variant="dot"
-                          >
-                            <Avatar
-                              src={user.providerData[0].photoURL}
-                              alt={user.providerData[0].displayName}
-                            />
-                          </StyledBadge>
-                        </ListItemAvatar>
-                      )} */}
                       <ListItemText
                         primary={user.providerData[0].displayName}
                         secondary={user.providerData[0].email}
@@ -285,12 +225,61 @@ const AccountPage = () => {
                         secondary={user.providerData[0].providerId}
                       />
                     </ListItem>
+                    <ListItem button divider disableGutters>
+                      <ListItemText
+                        primary="Something Else"
+                        secondary={user.uid}
+                      />
+                      <ListItemSecondaryAction>
+                        <IconButton edge="end" aria-label="else">
+                          <EditOutlinedIcon />
+                        </IconButton>
+                      </ListItemSecondaryAction>
+                    </ListItem>
                     <ListItem disableGutters>
                       <ListItemText primary="UID" secondary={user.uid} />
                     </ListItem>
                   </List>
                 </>
               )}
+            </CardContent>
+          </Card>
+        </Box>
+        <Box mt={2} mb={1}>
+          <Card variant="outlined">
+            <CardHeader title="User Links" />
+            <CardContent>
+              <FormControl className={classes.formControl}>
+                <InputLabel id="chip-label">Linked Users</InputLabel>
+                <Select
+                  className={classes.select}
+                  labelId="chip-label"
+                  id="user-links"
+                  multiple
+                  value={personName}
+                  onChange={handleChange}
+                  input={<Input id="select-user-links" />}
+                  renderValue={(selected) => (
+                    <div className={classes.chips}>
+                      {selected.map((value) => (
+                        <Chip
+                          key={value}
+                          label={value}
+                          className={classes.chip}
+                        />
+                      ))}
+                    </div>
+                  )}
+                  MenuProps={MenuProps}
+                >
+                  {names.map((name) => (
+                    <MenuItem key={name} value={name}>
+                      <Checkbox checked={personName.indexOf(name) > -1} />
+                      <ListItemText primary={name} />
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
             </CardContent>
           </Card>
         </Box>
@@ -309,15 +298,6 @@ const AccountPage = () => {
                       Sign In With Google
                     </Button>
                   </Box>
-                  {/* <Box mt={2} mb={1}>
-                    <Button
-                      variant="outlined"
-                      color="primary"
-                      onClick={upgradeAccountWithGoogle}
-                    >
-                      Link Account With Google
-                    </Button>
-                  </Box> */}
                 </>
               )}
               {!user.isAnonymous && (
