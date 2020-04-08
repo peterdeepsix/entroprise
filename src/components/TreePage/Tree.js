@@ -20,11 +20,41 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-const Tree = ({ dims }) => {
+const Tree = ({ dims, usersDocs }) => {
   const classes = useStyles()
   const theme = useTheme()
   const nodeHeight = 32
   const nodeWidth = 144
+
+  let usersNodesData = [
+    {
+      width: 60,
+      height: 40,
+      name: "a",
+    },
+    {
+      width: 60,
+      height: 40,
+      name: "b",
+    },
+  ]
+
+  let newUsersNodesData = []
+
+  usersDocs.forEach((doc) => {
+    const data = doc.data()
+    const tempData = {
+      width: nodeWidth,
+      height: nodeHeight,
+      displayName: data.displayName,
+      uid: data.uid,
+    }
+    newUsersNodesData.push(tempData)
+  })
+
+  console.log(usersNodesData)
+  console.log(newUsersNodesData)
+
   return (
     <>
       <WebCola
@@ -64,7 +94,7 @@ const Tree = ({ dims }) => {
                 />
               )
             })}
-            {layout.nodes().map(({ x, y, width, height, name }, i) => (
+            {layout.nodes().map(({ x, y, width, height, displayName }, i) => (
               <div
                 key={i}
                 style={{
@@ -77,62 +107,14 @@ const Tree = ({ dims }) => {
                   borderRadius: 16,
                 }}
               >
-                {name}
+                <Chip name={displayName} />
               </div>
             ))}
           </>
         )}
-        nodes={[
-          {
-            width: nodeWidth,
-            height: nodeHeight,
-            name: "displayName",
-          },
-          {
-            width: nodeWidth,
-            height: nodeHeight,
-            name: "displayName",
-          },
-          {
-            width: nodeWidth,
-            height: nodeHeight,
-            name: "displayName",
-          },
-          {
-            width: nodeWidth,
-            height: nodeHeight,
-            name: "displayName",
-          },
-          {
-            width: nodeWidth,
-            height: nodeHeight,
-            name: "displayName",
-          },
-          {
-            width: nodeWidth,
-            height: nodeHeight,
-            name: "displayName",
-          },
-          {
-            width: nodeWidth,
-            height: nodeHeight,
-            name: "displayName",
-          },
-        ]}
-        links={[
-          { source: 1, target: 2 },
-          { source: 2, target: 3 },
-          { source: 3, target: 4 },
-          { source: 0, target: 1 },
-          { source: 2, target: 0 },
-          { source: 3, target: 5 },
-          { source: 0, target: 5 },
-        ]}
-        groups={[
-          { leaves: [0], groups: [1] },
-          { leaves: [1, 2] },
-          { leaves: [3, 4] },
-        ]}
+        nodes={newUsersNodesData}
+        links={[]}
+        groups={[]}
         width={dims.width}
         height={dims.height}
       />

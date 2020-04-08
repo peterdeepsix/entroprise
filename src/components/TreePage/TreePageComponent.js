@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from "react"
 import { Provider } from "react-dims"
 import firebase from "gatsby-plugin-firebase"
-import { useListVals } from "react-firebase-hooks/database"
+import { useAuthState } from "react-firebase-hooks/auth"
+import { useCollection, useDocument } from "react-firebase-hooks/firestore"
 
 import { makeStyles } from "@material-ui/core/styles"
 import {
@@ -34,13 +35,30 @@ const useStyles = makeStyles((theme) => ({
 
 const TreePageComponent = () => {
   const classes = useStyles()
+  const [users, userLoading, usersError] = useCollection(
+    firebase.firestore().collection("users"),
+    {
+      snapshotListenOptions: { includeMetadataChanges: true },
+    }
+  )
 
-  useEffect(() => {}, [])
+  const [usersDocs, setUsersDocs] = useState([])
+
+  useEffect(() => {
+    if (users) {
+      const tempUsersDocs = users.docs.filter(
+        (doc) => doc.data().isAnonymous == false
+      )
+      setUsersDocs(tempUsersDocs)
+    }
+  }, [users])
 
   return (
     <Box className={classes.root}>
       <Provider>
-        <Tree />
+        {userLoading && <IndefiniteLoading message="Users" />}
+        {usersError && <Typography>{usersError}</Typography>}
+        {users && <Tree usersDocs={usersDocs} />}
       </Provider>
     </Box>
   )
