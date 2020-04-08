@@ -12,9 +12,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-const TreeChip = ({ name, color, variant }) => {
+const TreeChip = ({ name, color, status }) => {
   const classes = useStyles()
-  const isOnline = true
   const isAvailable = true
 
   const handleClickOpen = () => {
@@ -28,9 +27,8 @@ const TreeChip = ({ name, color, variant }) => {
   return (
     <>
       <Chip
-        variant={variant}
         className={classes.chip}
-        color={color}
+        color={(status.state == "online" && "primary") || "inherit"}
         avatar={<Avatar alt="Parent" />}
         label={name}
         onClick={handleClickOpen}

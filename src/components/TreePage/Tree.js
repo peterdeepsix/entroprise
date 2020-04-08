@@ -26,20 +26,7 @@ const Tree = ({ dims, usersDocs }) => {
   const nodeHeight = 32
   const nodeWidth = 144
 
-  let usersNodesData = [
-    {
-      width: 60,
-      height: 40,
-      name: "a",
-    },
-    {
-      width: 60,
-      height: 40,
-      name: "b",
-    },
-  ]
-
-  let newUsersNodesData = []
+  let usersNodesData = []
 
   usersDocs.forEach((doc) => {
     const data = doc.data()
@@ -48,12 +35,10 @@ const Tree = ({ dims, usersDocs }) => {
       height: nodeHeight,
       displayName: data.displayName,
       uid: data.uid,
+      status: data.status,
     }
-    newUsersNodesData.push(tempData)
+    usersNodesData.push(tempData)
   })
-
-  console.log(usersNodesData)
-  console.log(newUsersNodesData)
 
   return (
     <>
@@ -94,25 +79,27 @@ const Tree = ({ dims, usersDocs }) => {
                 />
               )
             })}
-            {layout.nodes().map(({ x, y, width, height, displayName }, i) => (
-              <div
-                key={i}
-                style={{
-                  position: "absolute",
-                  left: x - width * 0.5,
-                  top: y - height * 0.5,
-                  width,
-                  height,
-                  backgroundColor: theme.palette.primary.main,
-                  borderRadius: 16,
-                }}
-              >
-                <Chip name={displayName} />
-              </div>
-            ))}
+            {layout
+              .nodes()
+              .map(({ x, y, width, height, displayName, status }, i) => (
+                <div
+                  key={i}
+                  style={{
+                    position: "absolute",
+                    left: x - width * 0.5,
+                    top: y - height * 0.5,
+                    width,
+                    height,
+                    backgroundColor: theme.palette.primary.main,
+                    borderRadius: 16,
+                  }}
+                >
+                  <Chip status={status} name={displayName} />
+                </div>
+              ))}
           </>
         )}
-        nodes={newUsersNodesData}
+        nodes={usersNodesData}
         links={[]}
         groups={[]}
         width={dims.width}
