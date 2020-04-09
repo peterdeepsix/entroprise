@@ -6,18 +6,18 @@ const useStyles = makeStyles((theme) => ({
   root: {},
 }))
 
-const Room = () => {
+const ThreadDetails = () => {
   const classes = useStyles()
   const theme = useTheme()
 
   return (
     <Box mt={3} mb={1}>
       <Card variant="outlined">
-        <CardHeader title="Room Name" />
-        <CardContent>Hello Room</CardContent>
+        <CardHeader title="Thread Name" />
+        <CardContent>Hello Thread</CardContent>
       </Card>
     </Box>
   )
 }
 
-export default Room
+export default ThreadDetails

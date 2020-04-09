@@ -39,7 +39,7 @@ const ThreadPage = () => {
   }, [userError])
 
   return (
-    <Container className={classes.root} disableGutters maxWidth="sm">
+    <Container className={classes.root} maxWidth="sm">
       {user && <ThreadPageComponent user={user} />}
       {userLoading && <IndefiniteLoading message="UserData" />}
       <Snackbar
