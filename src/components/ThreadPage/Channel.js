@@ -9,7 +9,7 @@ import { Box, Card, CardHeader, CardContent } from "@material-ui/core"
 import { makeStyles } from "@material-ui/core/styles"
 
 const useStyles = makeStyles((theme) => ({
-  chat: { height: "80vh" },
+  chat: { height: "60vh" },
 }))
 
 const Channel = ({ user }) => {

@@ -71,7 +71,7 @@ const IndexPage = ({ location }) => {
         <MapPage path="/app/map" />
         <TensorFlowPage path="/app/tensorflow" />
         <ServicePage path="/app/service" />
-        <ThreadPage path="/app/thread" />
+        <ThreadPage path="/app/thread/:uid" />
         {/* <PrivateRouteComponent path="/app" component={AppPageComponent} /> */}
       </Router>
     </InterfaceLayout>

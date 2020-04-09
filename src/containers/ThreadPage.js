@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
   root: {},
 }))
 
-const ThreadPage = () => {
+const ThreadPage = ({ uid }) => {
   const classes = useStyles()
 
   const [user, userLoading, userError] = useAuthState(firebase.auth())
@@ -40,7 +40,7 @@ const ThreadPage = () => {
 
   return (
     <Container className={classes.root} maxWidth="sm">
-      {user && <ThreadPageComponent user={user} />}
+      {user && <ThreadPageComponent uid={uid} user={user} />}
       {userLoading && <IndefiniteLoading message="UserData" />}
       <Snackbar
         anchorOrigin={{

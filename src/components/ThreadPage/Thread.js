@@ -20,14 +20,14 @@ const useStyles = makeStyles((theme) => ({
   root: {},
 }))
 
-const Thread = ({ user }) => {
+const Thread = ({ uid, user }) => {
   const classes = useStyles()
   const theme = useTheme()
 
   return (
     <>
-      {/* <ThreadDetails />
-      <Room user={user} /> */}
+      <ThreadDetails uid={uid} />
+      {/* <Room user={user} /> */}
       <Channel user={user} />
     </>
   )

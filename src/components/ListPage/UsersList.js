@@ -79,7 +79,7 @@ const UsersList = () => {
                 <ListItem
                   component={LinkComponent}
                   button
-                  to="/app/thread"
+                  to={`/app/thread/${data.uid}`}
                   key={doc.id}
                 >
                   {doc.data().status && (

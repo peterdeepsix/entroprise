@@ -13,10 +13,10 @@ const useStyles = makeStyles((theme) => ({
   root: {},
 }))
 
-const ThreadPageComponent = ({ user }) => {
+const ThreadPageComponent = ({ uid, user }) => {
   const classes = useStyles()
   const theme = useTheme()
 
-  return <Thread user={user} />
+  return <Thread uid={uid} user={user} />
 }
 export default ThreadPageComponent
