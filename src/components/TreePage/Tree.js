@@ -23,10 +23,11 @@ const useStyles = makeStyles((theme) => ({
 const Tree = ({ dims, usersDocs }) => {
   const classes = useStyles()
   const theme = useTheme()
-  const nodeHeight = 32
+  const nodeHeight = 48
   const nodeWidth = 144
 
   let usersNodesData = []
+  let usersLinksData = []
 
   usersDocs.forEach((doc) => {
     const data = doc.data()
@@ -36,8 +37,22 @@ const Tree = ({ dims, usersDocs }) => {
       displayName: data.displayName,
       uid: data.uid,
       status: data.status,
+      linkedUsers: data.linkedUsers,
     }
     usersNodesData.push(tempData)
+  })
+
+  usersNodesData.forEach((userNode) => {
+    if (userNode.linkedUsers)
+      userNode.linkedUsers.forEach((linkedUser) => {
+        const source = usersNodesData.map((el) => el.uid).indexOf(userNode.uid)
+        const target = usersNodesData.map((el) => el.uid).indexOf(linkedUser)
+        const tempLink = {
+          source: source,
+          target: target,
+        }
+        usersLinksData.push(tempLink)
+      })
   })
 
   return (
@@ -57,7 +72,7 @@ const Tree = ({ dims, usersDocs }) => {
                     top: y,
                     width,
                     height,
-                    backgroundColor: theme.palette.grey[400],
+                    backgroundColor: theme.palette.divider,
                     borderRadius: 16,
                     zIndex: -2,
                   }}
@@ -74,8 +89,8 @@ const Tree = ({ dims, usersDocs }) => {
                   y0={y}
                   x1={x2}
                   y1={y2}
-                  borderColor={theme.palette.divider}
-                  zIndex={0}
+                  borderColor={theme.palette.primary.main}
+                  zIndex={-1}
                 />
               )
             })}
@@ -90,7 +105,6 @@ const Tree = ({ dims, usersDocs }) => {
                     top: y - height * 0.5,
                     width,
                     height,
-                    backgroundColor: theme.palette.primary.main,
                     borderRadius: 16,
                   }}
                 >
@@ -100,8 +114,8 @@ const Tree = ({ dims, usersDocs }) => {
           </>
         )}
         nodes={usersNodesData}
-        links={[]}
-        groups={[]}
+        links={usersLinksData}
+        // groups={[{ leaves: [0, 1] }, { leaves: [0, 3] }]}
         width={dims.width}
         height={dims.height}
       />

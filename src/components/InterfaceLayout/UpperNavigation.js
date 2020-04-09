@@ -16,12 +16,12 @@ import {
   Slide,
   IconButton,
 } from "@material-ui/core"
-import SearchOutlinedIcon from "@material-ui/icons/SearchOutlined"
 import AccountCircleOutlinedIcon from "@material-ui/icons/AccountCircleOutlined"
+import FaceOutlinedIcon from "@material-ui/icons/FaceOutlined"
 
 import LinkComponent from "src/components/LinkComponent/LinkComponent"
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   appBar: {
     backgroundColor: theme.palette.background.default,
   },
@@ -84,7 +84,7 @@ const UpperNavigation = ({ props }) => {
   const classes = useStyles()
   const [anchorEl, setAnchorEl] = React.useState(null)
 
-  const handleClick = event => {
+  const handleClick = (event) => {
     setAnchorEl(event.currentTarget)
   }
 
@@ -102,10 +102,10 @@ const UpperNavigation = ({ props }) => {
             <IconButton
               edge="start"
               color="inherit"
-              aria-label="search"
-              onClick={handleClick}
+              aria-label="tensorflow"
+              onClick={() => navigate("/app/tensorflow")}
             >
-              <SearchOutlinedIcon />
+              <FaceOutlinedIcon />
             </IconButton>
             <div className={classes.grow} />
             <Typography

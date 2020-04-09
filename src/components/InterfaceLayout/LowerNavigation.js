@@ -12,6 +12,7 @@ import {
 import NaturePeopleOutlinedIcon from "@material-ui/icons/NaturePeopleOutlined"
 import AccountTreeOutlinedIcon from "@material-ui/icons/AccountTreeOutlined"
 import ListAltOutlinedIcon from "@material-ui/icons/ListAltOutlined"
+import PeopleAltOutlinedIcon from "@material-ui/icons/PeopleAltOutlined"
 
 const useStyles = makeStyles({
   stickToBottom: {
@@ -50,7 +51,7 @@ const LowerNavigation = ({ location }) => {
         <BottomNavigationAction
           value="/app/list"
           label="List"
-          icon={<ListAltOutlinedIcon />}
+          icon={<PeopleAltOutlinedIcon />}
         />
         <BottomNavigationAction
           value="/app/tree"
@@ -61,6 +62,11 @@ const LowerNavigation = ({ location }) => {
           value="/app/map"
           label="Map"
           icon={<NaturePeopleOutlinedIcon />}
+        />
+        <BottomNavigationAction
+          value="/app/thread"
+          label="Threads"
+          icon={<ListAltOutlinedIcon />}
         />
       </BottomNavigation>
     </AppBar>

@@ -28,7 +28,7 @@ const TreeChip = ({ name, color, status }) => {
     <>
       <Chip
         className={classes.chip}
-        color={(status.state == "online" && "primary") || "inherit"}
+        color={(status.state == "online" && "primary") || "default"}
         avatar={<Avatar alt="Parent" />}
         label={name}
         onClick={handleClickOpen}

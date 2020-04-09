@@ -30,9 +30,6 @@ const ServicePageComponent = ({ user }) => {
       <Channels user={user} />
       <Container maxWidth="sm">
         <VideoChat user={user} />
-        <Box mt={3}>
-          <UsersList />
-        </Box>
       </Container>
     </Box>
   )

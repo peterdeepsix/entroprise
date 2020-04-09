@@ -54,6 +54,10 @@ const ServicePage = Loadable(() => import("src/containers/ServicePage"), {
   fallback: <IndefiniteLoading message="ServicePage" />,
 })
 
+const ThreadPage = Loadable(() => import("src/containers/ThreadPage"), {
+  fallback: <IndefiniteLoading message="ThreadPage" />,
+})
+
 const IndexPage = ({ location }) => {
   return (
     <InterfaceLayout location={location}>
@@ -67,6 +71,7 @@ const IndexPage = ({ location }) => {
         <MapPage path="/app/map" />
         <TensorFlowPage path="/app/tensorflow" />
         <ServicePage path="/app/service" />
+        <ThreadPage path="/app/thread" />
         {/* <PrivateRouteComponent path="/app" component={AppPageComponent} /> */}
       </Router>
     </InterfaceLayout>

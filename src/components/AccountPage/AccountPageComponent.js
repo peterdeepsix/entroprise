@@ -181,6 +181,7 @@ const AccountPageComponent = ({ user }) => {
   const handleChange = (event) => {
     const firestoreUserRef = firestoreRef.doc(`users/${user.uid}/`)
     setLinkedUsers(event.target.value)
+    console.log(event.target)
     firestoreUserRef
       .set(
         {
@@ -282,15 +283,13 @@ const AccountPageComponent = ({ user }) => {
                       const data = doc.data()
                       if (data.isAnonymous == false)
                         return (
-                          <MenuItem key={data.uid} value={data.displayName}>
+                          <MenuItem key={data.uid} value={data.uid}>
                             <Checkbox
-                              checked={
-                                linkedUsers.indexOf(data.displayName) > -1
-                              }
+                              checked={linkedUsers.indexOf(data.uid) > -1}
                             />
                             <ListItemText
                               primary={data.displayName}
-                              secondary={data.email}
+                              secondary={data.uid}
                             />
                           </MenuItem>
                         )
