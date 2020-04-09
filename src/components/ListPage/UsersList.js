@@ -15,6 +15,8 @@ import {
 
 import { makeStyles, withStyles } from "@material-ui/core/styles"
 
+import LinkComponent from "src/components/LinkComponent/LinkComponent"
+
 const StyledBadge = withStyles((theme) => ({
   badge: {
     backgroundColor: "#44b700",
@@ -75,11 +77,10 @@ const UsersList = () => {
               }
               return (
                 <ListItem
+                  component={LinkComponent}
                   button
+                  to="/app/thread"
                   key={doc.id}
-                  onClick={() => {
-                    handleClickUser(doc)
-                  }}
                 >
                   {doc.data().status && (
                     <>
