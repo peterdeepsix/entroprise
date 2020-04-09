@@ -6,11 +6,11 @@ const useStyles = makeStyles((theme) => ({
   root: {},
 }))
 
-const Thread = () => {
+const Channel = () => {
   const classes = useStyles()
   const theme = useTheme()
 
-  return <Typography>Hello Thread</Typography>
+  return <Typography>Hello Channel</Typography>
 }
 
-export default Thread
+export default Channel

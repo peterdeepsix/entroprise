@@ -1,26 +1,7 @@
-import React, { useEffect, useRef, useState } from "react"
-import { Provider } from "react-dims"
-import firebase from "gatsby-plugin-firebase"
-import { useAuthState } from "react-firebase-hooks/auth"
-import { useCollection, useDocument } from "react-firebase-hooks/firestore"
+import React from "react"
 
-import { makeStyles } from "@material-ui/core/styles"
-import {
-  Typography,
-  Container,
-  Box,
-  Card,
-  CardContent,
-  CardHeader,
-  Dialog,
-  AppBar,
-  Toolbar,
-  Slide,
-  Button,
-  IconButton,
-} from "@material-ui/core"
-import CloseIcon from "@material-ui/icons/Close"
-import CallEndOutlinedIcon from "@material-ui/icons/CallEndOutlined"
+import { makeStyles, useTheme } from "@material-ui/core/styles"
+import { Box } from "@material-ui/core"
 
 import Loadable from "@loadable/component"
 import IndefiniteLoading from "src/components/Loading/IndefiniteLoading"
@@ -28,38 +9,34 @@ import IndefiniteLoading from "src/components/Loading/IndefiniteLoading"
 const Thread = Loadable(() => import("./Thread"), {
   fallback: <IndefiniteLoading message="Thread" />,
 })
+const Channel = Loadable(() => import("./Channel"), {
+  fallback: <IndefiniteLoading message="Channel" />,
+})
+const Room = Loadable(() => import("./Room"), {
+  fallback: <IndefiniteLoading message="Room" />,
+})
+
+const ServicePageComponent = Loadable(
+  () => import("src/components/ServicePage/ServicePageComponent"),
+  {
+    fallback: <IndefiniteLoading message="ServicePageComponent" />,
+  }
+)
 
 const useStyles = makeStyles((theme) => ({
-  root: { height: "100vh" },
+  root: {},
 }))
 
-const ThreadPageComponent = () => {
+const ThreadPageComponent = ({ user }) => {
   const classes = useStyles()
-  const [users, userLoading, usersError] = useCollection(
-    firebase.firestore().collection("users"),
-    {
-      snapshotListenOptions: { includeMetadataChanges: true },
-    }
-  )
-
-  const [usersDocs, setUsersDocs] = useState([])
-
-  useEffect(() => {
-    if (users) {
-      const tempUsersDocs = users.docs.filter(
-        (doc) => doc.data().isAnonymous == false
-      )
-      setUsersDocs(tempUsersDocs)
-    }
-  }, [users])
+  const theme = useTheme()
 
   return (
-    <Box className={classes.root}>
-      <Provider>
-        {userLoading && <IndefiniteLoading message="Users" />}
-        {usersError && <Typography>{usersError}</Typography>}
-        {users && <Thread usersDocs={usersDocs} />}
-      </Provider>
+    <Box>
+      <Thread />
+      <Channel />
+      <Room />
+      <ServicePageComponent user={user} />
     </Box>
   )
 }

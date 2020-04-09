@@ -65,7 +65,7 @@ const LowerNavigation = ({ location }) => {
         />
         <BottomNavigationAction
           value="/app/thread"
-          label="Threads"
+          label="Thread"
           icon={<ListAltOutlinedIcon />}
         />
       </BottomNavigation>

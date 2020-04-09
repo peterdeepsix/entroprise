@@ -6,11 +6,11 @@ const useStyles = makeStyles((theme) => ({
   root: {},
 }))
 
-const Thread = () => {
+const Room = () => {
   const classes = useStyles()
   const theme = useTheme()
 
-  return <Typography>Hello Thread</Typography>
+  return <Typography>Hello Room</Typography>
 }
 
-export default Thread
+export default Room
