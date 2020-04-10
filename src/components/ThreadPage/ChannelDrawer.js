@@ -4,10 +4,7 @@ import { makeStyles } from "@material-ui/core/styles"
 import { Button, SwipeableDrawer } from "@material-ui/core"
 
 const useStyles = makeStyles((theme) => ({
-  drawer: {
-    borderTopLeftRadius: theme.spacing(2),
-    borderTopRightRadius: theme.spacing(2),
-  },
+  dialogPaper: { borderTopLeftRadius: 16, borderTopRightRadius: 16 },
 }))
 
 const ChannelDrawer = ({ handleClose, handleOpen, open, children }) => {
@@ -15,11 +12,10 @@ const ChannelDrawer = ({ handleClose, handleOpen, open, children }) => {
 
   return (
     <SwipeableDrawer
-      className={classes.drawer}
+      PaperProps={{ classes: { root: classes.dialogPaper } }}
       anchor="bottom"
       open={open}
       onClose={handleClose}
-      onOpen={handleOpen}
     >
       {children}
     </SwipeableDrawer>

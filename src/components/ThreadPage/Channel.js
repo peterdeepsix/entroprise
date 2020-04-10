@@ -119,6 +119,7 @@ const Channel = ({ user }) => {
       </Button>
       <Button onClick={handleSubmit}>Get Chat Token</Button>
       <ChannelDrawer
+        className={classes.drawer}
         open={open}
         handleOpen={toggleDrawer}
         handleClose={handleClose}
