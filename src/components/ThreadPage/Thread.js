@@ -4,10 +4,6 @@ import { makeStyles, useTheme } from "@material-ui/core/styles"
 import Loadable from "@loadable/component"
 import IndefiniteLoading from "src/components/Loading/IndefiniteLoading"
 
-const ThreadDetails = Loadable(() => import("./ThreadDetails"), {
-  fallback: <IndefiniteLoading message="ThreadDetails" />,
-})
-
 const Channel = Loadable(() => import("./Channel"), {
   fallback: <IndefiniteLoading message="Channel" />,
 })
@@ -26,7 +22,6 @@ const Thread = ({ uid, user }) => {
 
   return (
     <>
-      <ThreadDetails uid={uid} />
       {/* <Room user={user} /> */}
       <Channel user={user} />
     </>
