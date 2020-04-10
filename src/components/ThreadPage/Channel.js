@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react"
+import React, { useState, useCallback, useEffect } from "react"
 import firebase from "gatsby-plugin-firebase"
 import { useListVals } from "react-firebase-hooks/database"
 import { useCollection } from "react-firebase-hooks/firestore"
@@ -6,7 +6,7 @@ import { GiftedChat } from "react-web-gifted-chat"
 import Chat from "twilio-chat"
 
 import { makeStyles } from "@material-ui/core/styles"
-import { Box, Button } from "@material-ui/core"
+import { Container, Button } from "@material-ui/core"
 
 import Loadable from "@loadable/component"
 import IndefiniteLoading from "src/components/Loading/IndefiniteLoading"
@@ -16,7 +16,7 @@ const ChannelDrawer = Loadable(() => import("./ChannelDrawer"), {
 })
 
 const useStyles = makeStyles((theme) => ({
-  chat: { height: "60vh" },
+  chat: { height: "30vh" },
 }))
 
 const Channel = ({ user }) => {
@@ -33,6 +33,11 @@ const Channel = ({ user }) => {
   )
 
   const [chatClient, setChatClient] = useState(null)
+  const [open, setOpen] = useState(false)
+
+  useEffect(() => {
+    setOpen(true)
+  }, [])
 
   const handleSubmit = useCallback(
     async (event) => {
@@ -89,8 +94,6 @@ const Channel = ({ user }) => {
       })
   }
 
-  const [open, setOpen] = useState(true)
-
   const handleOpen = () => {
     // console.log("open", open)
     setOpen(true)
@@ -109,7 +112,7 @@ const Channel = ({ user }) => {
       return
     }
 
-    setOpen(true)
+    setOpen(!open)
   }
 
   return (
@@ -124,7 +127,7 @@ const Channel = ({ user }) => {
         handleOpen={toggleDrawer}
         handleClose={handleClose}
       >
-        <Box className={classes.chat}>
+        <Container className={classes.chat}>
           <GiftedChat
             showUserAvatar
             messages={messages.slice().reverse()}
@@ -135,7 +138,7 @@ const Channel = ({ user }) => {
               avatar: user.photoURL,
             }}
           />
-        </Box>
+        </Container>
       </ChannelDrawer>
     </>
   )

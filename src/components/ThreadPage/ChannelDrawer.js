@@ -14,6 +14,7 @@ const ChannelDrawer = ({ handleClose, handleOpen, open, children }) => {
     <SwipeableDrawer
       PaperProps={{ classes: { root: classes.dialogPaper } }}
       anchor="bottom"
+      BackdropProps={{ invisible: true }}
       open={open}
       onClose={handleClose}
     >
