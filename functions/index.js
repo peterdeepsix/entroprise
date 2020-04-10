@@ -3,6 +3,7 @@ const admin = require("firebase-admin")
 
 const AccessToken = require("twilio").jwt.AccessToken
 const VideoGrant = AccessToken.VideoGrant
+const ChatGrant = AccessToken.ChatGrant
 const MAX_ALLOWED_SESSION_DURATION = 14400
 
 admin.initializeApp()
@@ -15,7 +16,7 @@ exports.onUserStatusChanged = functions.database
     const userStatusFirestoreRef = firestore.doc(`users/${context.params.uid}`)
     console.log(change, "change")
     console.log(context, "context")
-    return change.after.ref.once("value").then(statusSnapshot => {
+    return change.after.ref.once("value").then((statusSnapshot) => {
       const status = statusSnapshot.val()
       console.log(status, "status")
       if (status.last_changed > eventStatus.last_changed) {
@@ -80,6 +81,53 @@ exports.token = functions.https.onRequest((req, res) => {
   const roomName = req.body.roomName
   const token = videoToken(identity, roomName)
   console.log(`issued token for ${identity} in room ${roomName}`)
+  console.log(`token ${token}`)
+  sendTokenResponse(token, res)
+})
+
+exports.chat = functions.https.onRequest((req, res) => {
+  res.set("Access-Control-Allow-Origin", "*")
+  res.set("Access-Control-Allow-Methods", "GET")
+  res.set("Access-Control-Allow-Headers", "Content-Type")
+  res.set("Access-Control-Max-Age", "3600")
+
+  if (req.method == "OPTIONS") {
+    res.status(204).send("")
+  }
+
+  const sendTokenResponse = (token, res) => {
+    res.set("Content-Type", "application/json")
+    res.send(
+      JSON.stringify({
+        token: token.toJwt(),
+      })
+    )
+  }
+
+  const generateToken = () => {
+    return new AccessToken(
+      functions.config().twilio.accountsid,
+      functions.config().twilio.apikeysid,
+      functions.config().twilio.apikeysecret,
+      {
+        ttl: MAX_ALLOWED_SESSION_DURATION,
+      }
+    )
+  }
+
+  const chatToken = (identity) => {
+    const chatGrant = new ChatGrant({
+      serviceSid: identity,
+    })
+    const token = generateToken()
+    token.addGrant(chatGrant)
+    token.identity = identity
+    return token
+  }
+
+  const identity = req.body.identity
+  const token = chatToken(identity)
+  console.log(`issued token for ${identity}`)
   console.log(`token ${token}`)
   sendTokenResponse(token, res)
 })

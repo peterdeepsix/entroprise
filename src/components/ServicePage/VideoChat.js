@@ -7,12 +7,12 @@ const VideoChat = ({ user }) => {
   const [roomName, setRoomName] = useState("default")
   const [token, setToken] = useState()
 
-  const handleRoomNameChange = useCallback(event => {
+  const handleRoomNameChange = useCallback((event) => {
     setRoomName(event.target.value)
   }, [])
 
   const handleSubmit = useCallback(
-    async event => {
+    async (event) => {
       event.preventDefault()
 
       async function fetchAsync() {
@@ -34,15 +34,15 @@ const VideoChat = ({ user }) => {
       }
 
       fetchAsync()
-        .then(data => {
+        .then((data) => {
           setToken(data.token)
         })
-        .catch(reason => console.log(reason.message))
+        .catch((reason) => console.log(reason.message))
     },
     [roomName, uid]
   )
 
-  const handleLogout = useCallback(event => {
+  const handleLogout = useCallback((event) => {
     setToken(null)
   }, [])
 
