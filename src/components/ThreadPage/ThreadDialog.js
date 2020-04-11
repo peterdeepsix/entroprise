@@ -1,16 +1,16 @@
 import React from "react"
 
-import { makeStyles } from "@material-ui/core/styles"
+import { makeStyles, useTheme } from "@material-ui/core/styles"
 import {
+  useMediaQuery,
   Button,
   Dialog,
   AppBar,
   Toolbar,
-  IconButton,
-  Typography,
   Slide,
+  IconButton,
 } from "@material-ui/core"
-import CloseIcon from "@material-ui/icons/Close"
+import ArrowBackOutlinedIcon from "@material-ui/icons/ArrowBackOutlined"
 
 import Loadable from "@loadable/component"
 import IndefiniteLoading from "src/components/Loading/IndefiniteLoading"
@@ -42,28 +42,28 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 const ThreadDialog = ({ user, handleClose, open, children }) => {
   const classes = useStyles()
+  const theme = useTheme()
+  const fullScreen = useMediaQuery(theme.breakpoints.down("sm"))
 
   return (
     <Dialog
-      fullScreen
+      fullScreen={fullScreen}
       open={open}
       onClose={handleClose}
       TransitionComponent={Transition}
     >
       <AppBar className={classes.appBar} elevation={0}>
         <Toolbar>
-          <Button
-            className={classes.button}
-            startIcon={<CloseIcon />}
-            variant="outlined"
-            autoFocus
+          <IconButton
+            edge="start"
             color="inherit"
             onClick={handleClose}
+            aria-label="back"
           >
-            Exit Thread
-          </Button>
+            <ArrowBackOutlinedIcon />
+          </IconButton>
           <div className={classes.grow} />
-          <Channel user={user} />
+          <Channel closeThread={handleClose} user={user} />
         </Toolbar>
       </AppBar>
       {children}

@@ -1,8 +1,20 @@
 import React, { useState, useEffect } from "react"
 import Video from "twilio-video"
-import Participant from "./Participant"
 
-import { Box, Button, Paper, CardHeader, CardContent } from "@material-ui/core"
+import {
+  Container,
+  Box,
+  Paper,
+  CardHeader,
+  CardContent,
+} from "@material-ui/core"
+
+import Loadable from "@loadable/component"
+import IndefiniteLoading from "src/components/Loading/IndefiniteLoading"
+
+const Participant = Loadable(() => import("./Participant"), {
+  fallback: <IndefiniteLoading message="Participant" />,
+})
 
 const Room = ({ roomName, token, handleLogout }) => {
   const [room, setRoom] = useState(null)
@@ -56,9 +68,12 @@ const Room = ({ roomName, token, handleLogout }) => {
         <Participant
           key={room.localParticipant.sid}
           participant={room.localParticipant}
+          isMuted={true}
         />
       ) : (
-        ""
+        <Box m={10}>
+          <IndefiniteLoading message="Participant" />{" "}
+        </Box>
       )}
     </>
   )

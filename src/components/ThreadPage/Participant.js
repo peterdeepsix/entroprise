@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react"
 
 import { Typography } from "@material-ui/core"
 
-const Participant = ({ participant }) => {
+const Participant = ({ participant, isMuted }) => {
   const [videoTracks, setVideoTracks] = useState([])
   const [audioTracks, setAudioTracks] = useState([])
 
@@ -67,7 +67,7 @@ const Participant = ({ participant }) => {
   return (
     <>
       <video width="100%" ref={videoRef} autoPlay={true} />
-      <audio ref={audioRef} autoPlay={true} muted={true} />
+      <audio ref={audioRef} autoPlay={true} muted={isMuted || false} />
     </>
   )
 }

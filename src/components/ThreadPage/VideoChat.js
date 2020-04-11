@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useEffect } from "react"
-
+import { navigate } from "gatsby"
+import { makeStyles, useTheme } from "@material-ui/core/styles"
 import { Button } from "@material-ui/core"
 
 import Loadable from "@loadable/component"
@@ -13,7 +14,12 @@ const Room = Loadable(() => import("./Room"), {
   fallback: <IndefiniteLoading message="Room" />,
 })
 
+const useStyles = makeStyles((theme) => ({
+  root: {},
+}))
+
 const VideoChat = ({ target, user }) => {
+  const classes = useStyles()
   const { uid } = user
   const [token, setToken] = useState()
   const [open, setOpen] = useState(true)
@@ -24,6 +30,8 @@ const VideoChat = ({ target, user }) => {
 
   const handleClose = () => {
     setOpen(false)
+    handleLogout()
+    navigate(`/app/tree`)
   }
 
   const handleSubmit = useCallback(async () => {
@@ -58,15 +66,13 @@ const VideoChat = ({ target, user }) => {
 
   useEffect(() => {
     handleSubmit()
-  }, [token])
+    if (!open) handleOpen()
+  }, [token, open])
 
   return (
     <>
-      <Button variant="outlined" color="primary" onClick={handleOpen}>
-        Open Thread Dialog
-      </Button>
       <ThreadDialog user={user} open={open} handleClose={handleClose}>
-        {token && (
+        {token && open && (
           <Room roomName={target} token={token} handleLogout={handleLogout} />
         )}
       </ThreadDialog>

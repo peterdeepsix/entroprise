@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 
-import { makeStyles } from "@material-ui/core/styles"
-import { Button, SwipeableDrawer } from "@material-ui/core"
+import { makeStyles, useTheme } from "@material-ui/core/styles"
+import { useMediaQuery, Container, SwipeableDrawer } from "@material-ui/core"
 
 const useStyles = makeStyles((theme) => ({
   dialogPaper: { borderTopLeftRadius: 16, borderTopRightRadius: 16 },
@@ -9,6 +9,8 @@ const useStyles = makeStyles((theme) => ({
 
 const ChannelDrawer = ({ handleClose, handleOpen, open, children }) => {
   const classes = useStyles()
+  const theme = useTheme()
+  const fullScreen = useMediaQuery(theme.breakpoints.down("sm"))
 
   return (
     <SwipeableDrawer
