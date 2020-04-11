@@ -21,6 +21,7 @@ import {
   Typography,
 } from "@material-ui/core"
 import AvatarGroup from "@material-ui/lab/AvatarGroup"
+import ChatOutlinedIcon from "@material-ui/icons/ChatOutlined"
 
 import Loadable from "@loadable/component"
 import IndefiniteLoading from "src/components/Loading/IndefiniteLoading"
@@ -39,11 +40,6 @@ const Channel = ({ user }) => {
   const theme = useTheme()
 
   const [value, setValue] = useState("")
-  const { listen, listening, stop } = useSpeechRecognition({
-    onResult: (result) => {
-      setValue(result)
-    },
-  })
 
   const { uid } = user
 
@@ -140,22 +136,14 @@ const Channel = ({ user }) => {
   if (messagesLoading) return <IndefiniteLoading message="Messages" />
   return (
     <>
-      <Box mt={3} mb={10}>
-        <TextField
-          fullWidth
-          value={value}
-          onChange={(event) => setValue(event.target.value)}
-        />
-        <Button onMouseDown={listen} onMouseUp={stop}>
-          Transcribe Audio
-        </Button>
-        {listening && <Typography>Transcribing audio ...</Typography>}
-        <Button variant="outlined" color="primary" onClick={toggleDrawer}>
-          Async Thread
-        </Button>
-        {/* <Button onClick={() => navigate("/app/tree")}>Exit Thread</Button> */}
-      </Box>
-
+      <Button
+        startIcon={<ChatOutlinedIcon />}
+        variant="outlined"
+        color="inherit"
+        onClick={toggleDrawer}
+      >
+        Toggle Channel
+      </Button>
       <ChannelDrawer
         className={classes.drawer}
         open={open}

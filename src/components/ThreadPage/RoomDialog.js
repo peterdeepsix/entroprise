@@ -17,7 +17,7 @@ import {
 } from "@material-ui/core"
 import CloseIcon from "@material-ui/icons/Close"
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   appBar: {
     position: "relative",
   },
@@ -55,7 +55,7 @@ const RoomDialog = () => {
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImN0eSI6InR3aWxpby1mcGE7dj0xIn0.eyJqdGkiOiJTS2M4OGFlNWY2OWVjMTk4ODNmMTk5NzMwYmIxNGFmNjI5LTE1ODYxMDIzNjUiLCJncmFudHMiOnsiaWRlbnRpdHkiOiJPNGdqeTZRUXZSVGxEYWg2R2xiN1ZnMmZsY04yIiwidmlkZW8iOnsicm9vbSI6InBldGVyYXJub2xkIn19LCJpYXQiOjE1ODYxMDIzNjUsImV4cCI6MTU4NjExNjc2NSwiaXNzIjoiU0tjODhhZTVmNjllYzE5ODgzZjE5OTczMGJiMTRhZjYyOSIsInN1YiI6IkFDNzViY2ZiOWMwNjA3NzFkN2NlY2FlZDc5ODcxZDVmZjUifQ.866PdjfrItylxJkcioamUJRHnxPAkjQYaYGXwe3T0yY",
       { tracks: [] }
     ).then(
-      newRoom => {
+      (newRoom) => {
         setRoomName(newRoom.name)
 
         newRoom.once("disconnected", () => {
@@ -68,7 +68,7 @@ const RoomDialog = () => {
 
         window.twilioRoom = newRoom
         if (localTracksRef.current) {
-          localTracksRef.current.forEach(track =>
+          localTracksRef.current.forEach((track) =>
             newRoom.localParticipant.publishTrack(track, {
               priority: track.kind === "video" ? "low" : "standard",
             })
@@ -80,7 +80,7 @@ const RoomDialog = () => {
         setIsConnecting(false)
         console.log('Connected to Room "%s"', newRoom.name)
       },
-      error => {
+      (error) => {
         console.log(error)
         setIsConnecting(false)
       }
@@ -116,7 +116,6 @@ const RoomDialog = () => {
             </Button>
           </Toolbar>
         </AppBar>
-        asd
       </Dialog>
     </>
   )

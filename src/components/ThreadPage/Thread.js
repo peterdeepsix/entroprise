@@ -4,10 +4,6 @@ import { makeStyles, useTheme } from "@material-ui/core/styles"
 import Loadable from "@loadable/component"
 import IndefiniteLoading from "src/components/Loading/IndefiniteLoading"
 
-const Channel = Loadable(() => import("./Channel"), {
-  fallback: <IndefiniteLoading message="Channel" />,
-})
-
 const VideoChat = Loadable(() => import("./VideoChat"), {
   fallback: <IndefiniteLoading message="VideoChat" />,
 })
@@ -23,7 +19,6 @@ const Thread = ({ uid, user }) => {
   return (
     <>
       <VideoChat target={uid} user={user} />
-      <Channel user={user} />
     </>
   )
 }

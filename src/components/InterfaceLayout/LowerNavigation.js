@@ -12,6 +12,7 @@ import {
 import NaturePeopleOutlinedIcon from "@material-ui/icons/NaturePeopleOutlined"
 import AccountTreeOutlinedIcon from "@material-ui/icons/AccountTreeOutlined"
 import ListAltOutlinedIcon from "@material-ui/icons/ListAltOutlined"
+import TodayOutlinedIcon from "@material-ui/icons/TodayOutlined"
 
 const useStyles = makeStyles({
   stickToBottom: {
@@ -61,6 +62,11 @@ const LowerNavigation = ({ location }) => {
           value="/app/map"
           label="Map"
           icon={<NaturePeopleOutlinedIcon />}
+        />
+        <BottomNavigationAction
+          value="/app/timeline"
+          label="Timeline"
+          icon={<TodayOutlinedIcon />}
         />
       </BottomNavigation>
     </AppBar>

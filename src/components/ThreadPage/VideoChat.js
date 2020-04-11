@@ -1,8 +1,13 @@
 import React, { useState, useCallback, useEffect } from "react"
+
+import { Button } from "@material-ui/core"
+
 import Loadable from "@loadable/component"
 import IndefiniteLoading from "src/components/Loading/IndefiniteLoading"
 
-import { Button } from "@material-ui/core"
+const ThreadDialog = Loadable(() => import("./ThreadDialog"), {
+  fallback: <IndefiniteLoading message="ThreadDialog" />,
+})
 
 const Room = Loadable(() => import("./Room"), {
   fallback: <IndefiniteLoading message="Room" />,
@@ -11,6 +16,15 @@ const Room = Loadable(() => import("./Room"), {
 const VideoChat = ({ target, user }) => {
   const { uid } = user
   const [token, setToken] = useState()
+  const [open, setOpen] = useState(true)
+
+  const handleOpen = () => {
+    setOpen(true)
+  }
+
+  const handleClose = () => {
+    setOpen(false)
+  }
 
   const handleSubmit = useCallback(async () => {
     async function fetchAsync() {
@@ -46,9 +60,18 @@ const VideoChat = ({ target, user }) => {
     handleSubmit()
   }, [token])
 
-  if (token)
-    return <Room roomName={target} token={token} handleLogout={handleLogout} />
-  return null
+  return (
+    <>
+      <Button variant="outlined" color="primary" onClick={handleOpen}>
+        Open Thread Dialog
+      </Button>
+      <ThreadDialog user={user} open={open} handleClose={handleClose}>
+        {token && (
+          <Room roomName={target} token={token} handleLogout={handleLogout} />
+        )}
+      </ThreadDialog>
+    </>
+  )
 }
 
 export default VideoChat

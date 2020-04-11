@@ -54,6 +54,10 @@ const ThreadPage = Loadable(() => import("src/containers/ThreadPage"), {
   fallback: <IndefiniteLoading message="ThreadPage" />,
 })
 
+const TimelinePage = Loadable(() => import("src/containers/TimelinePage"), {
+  fallback: <IndefiniteLoading message="Timeline" />,
+})
+
 const IndexPage = ({ location }) => {
   return (
     <InterfaceLayout location={location}>
@@ -65,6 +69,7 @@ const IndexPage = ({ location }) => {
         <ListPage path="/app/list" />
         <TreePage path="/app/tree" />
         <MapPage path="/app/map" />
+        <TimelinePage path="/app/timeline" />
         <TensorFlowPage path="/app/tensorflow" />
         <ThreadPage path="/app/thread/:uid" />
         {/* <PrivateRouteComponent path="/app" component={AppPageComponent} /> */}
