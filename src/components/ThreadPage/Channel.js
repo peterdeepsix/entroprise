@@ -1,11 +1,13 @@
 import React, { useState, useCallback, useEffect } from "react"
+import { navigate } from "gatsby"
 import firebase from "gatsby-plugin-firebase"
 import { useListVals } from "react-firebase-hooks/database"
 import { useCollection } from "react-firebase-hooks/firestore"
-import { GiftedChat } from "react-web-gifted-chat"
+import { GiftedChat, MessageText, InputToolbar } from "react-web-gifted-chat"
 import Chat from "twilio-chat"
+import { useSpeechRecognition } from "react-speech-kit"
 
-import { makeStyles } from "@material-ui/core/styles"
+import { makeStyles, useTheme } from "@material-ui/core/styles"
 import {
   Box,
   Container,
@@ -15,6 +17,8 @@ import {
   ListItemText,
   Avatar,
   Divider,
+  TextField,
+  Typography,
 } from "@material-ui/core"
 import AvatarGroup from "@material-ui/lab/AvatarGroup"
 
@@ -32,6 +36,14 @@ const useStyles = makeStyles((theme) => ({
 
 const Channel = ({ user }) => {
   const classes = useStyles()
+  const theme = useTheme()
+
+  const [value, setValue] = useState("")
+  const { listen, listening, stop } = useSpeechRecognition({
+    onResult: (result) => {
+      setValue(result)
+    },
+  })
 
   const { uid } = user
 
@@ -125,13 +137,25 @@ const Channel = ({ user }) => {
 
     setOpen(!open)
   }
-
+  if (messagesLoading) return <IndefiniteLoading message="Messages" />
   return (
     <>
-      <Button variant="outlined" color="primary" onClick={toggleDrawer}>
-        Open Channel
-      </Button>
-      <Button onClick={handleSubmit}>Get Chat Token</Button>
+      <Box mt={3} mb={10}>
+        <TextField
+          fullWidth
+          value={value}
+          onChange={(event) => setValue(event.target.value)}
+        />
+        <Button onMouseDown={listen} onMouseUp={stop}>
+          Transcribe Audio
+        </Button>
+        {listening && <Typography>Transcribing audio ...</Typography>}
+        <Button variant="outlined" color="primary" onClick={toggleDrawer}>
+          Async Thread
+        </Button>
+        {/* <Button onClick={() => navigate("/app/tree")}>Exit Thread</Button> */}
+      </Box>
+
       <ChannelDrawer
         className={classes.drawer}
         open={open}
@@ -175,6 +199,28 @@ const Channel = ({ user }) => {
                 id: user.uid,
                 name: user.displayName,
                 avatar: user.photoURL,
+              }}
+              renderMessageText={({ currentMessage, ...args }) => {
+                return (
+                  <MessageText
+                    currentMessage={currentMessage}
+                    customTextStyle={{ fontFamily: "Muli" }}
+                    {...args}
+                  />
+                )
+              }}
+              renderInputToolbar={({ ...args }) => {
+                return (
+                  <InputToolbar
+                    containerStyle={{
+                      borderTopColor: theme.palette.divider,
+                    }}
+                    primaryStyle={{
+                      fontFamily: "Muli",
+                    }}
+                    {...args}
+                  />
+                )
               }}
             />
           </Container>

@@ -205,7 +205,12 @@ const AccountPageComponent = ({ user }) => {
               {(user.isAnonymous && (
                 <>
                   <List className={classes.root}>
-                    <ListItem divider disableGutters>
+                    <ListItem
+                      divider
+                      disableGutters
+                      button
+                      onClick={signInWithGoogle}
+                    >
                       <ListItemText
                         primary={"Anonymous User"}
                         secondary="Sign In To Upgrade"

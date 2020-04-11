@@ -8,8 +8,8 @@ const Channel = Loadable(() => import("./Channel"), {
   fallback: <IndefiniteLoading message="Channel" />,
 })
 
-const Room = Loadable(() => import("./Room"), {
-  fallback: <IndefiniteLoading message="Room" />,
+const VideoChat = Loadable(() => import("./VideoChat"), {
+  fallback: <IndefiniteLoading message="VideoChat" />,
 })
 
 const useStyles = makeStyles((theme) => ({
@@ -22,7 +22,7 @@ const Thread = ({ uid, user }) => {
 
   return (
     <>
-      {/* <Room user={user} /> */}
+      <VideoChat target={uid} user={user} />
       <Channel user={user} />
     </>
   )

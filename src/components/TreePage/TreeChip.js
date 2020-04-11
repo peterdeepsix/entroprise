@@ -5,6 +5,8 @@ import { makeStyles } from "@material-ui/core/styles"
 import { Avatar, Chip } from "@material-ui/core"
 import CallOutlinedIcon from "@material-ui/icons/CallOutlined"
 
+import LinkComponent from "src/components/LinkComponent/LinkComponent"
+
 const useStyles = makeStyles((theme) => ({
   chip: {
     width: 144,
@@ -12,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-const TreeChip = ({ name, color, status }) => {
+const TreeChip = ({ name, color, status, uid }) => {
   const classes = useStyles()
   const isAvailable = true
 
@@ -28,6 +30,8 @@ const TreeChip = ({ name, color, status }) => {
     <>
       <Chip
         className={classes.chip}
+        component={LinkComponent}
+        to={`/app/thread/${uid}`}
         color={(status.state == "online" && "primary") || "default"}
         avatar={<Avatar alt="Parent" />}
         label={name}

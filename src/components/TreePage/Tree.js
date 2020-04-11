@@ -8,8 +8,8 @@ import { Typography, Card, CardHeader } from "@material-ui/core"
 import Loadable from "@loadable/component"
 import IndefiniteLoading from "src/components/Loading/IndefiniteLoading"
 
-const Chip = Loadable(() => import("./Chip"), {
-  fallback: <IndefiniteLoading message="Chip" />,
+const TreeChip = Loadable(() => import("./TreeChip"), {
+  fallback: <IndefiniteLoading message="TreeChip" />,
 })
 
 const useStyles = makeStyles((theme) => ({
@@ -96,7 +96,7 @@ const Tree = ({ dims, usersDocs }) => {
             })}
             {layout
               .nodes()
-              .map(({ x, y, width, height, displayName, status }, i) => (
+              .map(({ x, y, width, height, displayName, status, uid }, i) => (
                 <div
                   key={i}
                   style={{
@@ -108,7 +108,7 @@ const Tree = ({ dims, usersDocs }) => {
                     borderRadius: 16,
                   }}
                 >
-                  <Chip status={status} name={displayName} />
+                  <TreeChip uid={uid} status={status} name={displayName} />
                 </div>
               ))}
           </>
