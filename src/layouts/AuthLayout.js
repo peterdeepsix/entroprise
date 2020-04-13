@@ -38,6 +38,11 @@ const AuthLayout = ({ children }) => {
   // listen for auth change
   auth.onAuthStateChanged((user) => {
     if (user) {
+      // LogRocket.identify(user.uid, {
+      //   name: user.displayName,
+      //   email: user.email,
+      //   isAnonymous: true,
+      // })
       const firestoreUserStatusRef = firestoreRef.doc(`users/${user.uid}/`)
       firestoreUserStatusRef
         .set(

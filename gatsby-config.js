@@ -15,6 +15,19 @@ module.exports = {
     `gatsby-transformer-sharp`,
     `gatsby-plugin-sharp`,
     {
+      resolve: `gatsby-plugin-firebase-messaging`,
+      options: {
+        config: {
+          apiKey: process.env._F_APIKEY,
+          appId: process.env._F_APPID,
+          messagingSenderId: process.env._F_MESSAGINGSENDERID,
+          projectId: process.env._F_PROJECTID,
+        },
+        // disableDevelopment: true,
+        // removeFirebaseServiceWorker: true,
+      },
+    },
+    {
       resolve: "gatsby-plugin-firebase",
       options: {
         features: {

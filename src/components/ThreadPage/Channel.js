@@ -4,6 +4,7 @@ import firebase from "gatsby-plugin-firebase"
 import { useListVals } from "react-firebase-hooks/database"
 import { useCollection } from "react-firebase-hooks/firestore"
 import { GiftedChat, MessageText, InputToolbar } from "react-web-gifted-chat"
+import clsx from "clsx"
 import Chat from "twilio-chat"
 import { useSpeechRecognition } from "react-speech-kit"
 
@@ -35,16 +36,25 @@ const ChannelDrawer = Loadable(() => import("./ChannelDrawer"), {
 })
 
 const useStyles = makeStyles((theme) => ({
-  chat: { height: 180 },
+  chat: { height: "100%" },
   box: { paddingLeft: theme.spacing(1) },
   grow: {
     flexGrow: 1,
   },
   menuButton: {
-    marginRight: theme.spacing(2),
+    marginRight: theme.spacing(1),
+  },
+  dotsButton: {
+    marginLeft: theme.spacing(1),
   },
   title: {
     flexGrow: 1,
+  },
+  fullHeight: {
+    height: "82vh",
+  },
+  halfHeight: {
+    height: 240,
   },
 }))
 
@@ -64,6 +74,7 @@ const Channel = ({ closeThread, user }) => {
     firebase.database().ref("messages")
   )
 
+  const [isFullHeight, setIsFullHeight] = useState(false)
   const [chatClient, setChatClient] = useState(null)
   const [open, setOpen] = useState(false)
 
@@ -127,12 +138,16 @@ const Channel = ({ closeThread, user }) => {
   }
 
   const handleOpen = () => {
-    // console.log("open", open)
     setOpen(true)
   }
 
   const handleClose = () => {
     setOpen(false)
+  }
+
+  const toggleIsFullHeight = () => {
+    console.log("isFullHeight", isFullHeight)
+    setIsFullHeight(!isFullHeight)
   }
 
   const toggleDrawer = (event) => {
@@ -161,7 +176,6 @@ const Channel = ({ closeThread, user }) => {
       )}
 
       <ChannelDrawer
-        className={classes.drawer}
         open={open}
         handleOpen={toggleDrawer}
         handleClose={handleClose}
@@ -176,6 +190,8 @@ const Channel = ({ closeThread, user }) => {
               <ArrowBackOutlinedIcon />
             </IconButton>
             <ListItemText
+              button
+              onClick={toggleIsFullHeight}
               primaryTypographyProps={{ style: theme.typography.body2 }}
               secondaryTypographyProps={{ style: theme.typography.caption }}
               className={classes.title}
@@ -189,13 +205,18 @@ const Channel = ({ closeThread, user }) => {
               <Avatar alt="Cindy Baker" />
               <Avatar alt="Cindy Baker" />
             </AvatarGroup>
-            <IconButton edge="end">
+            <IconButton className={classes.dotsButton} edge="end">
               <MoreVertIcon />
             </IconButton>
           </Toolbar>
 
           <Divider />
-          <Container className={classes.chat}>
+          <Container
+            className={clsx(classes.chat, {
+              [classes.fullHeight]: isFullHeight,
+              [classes.halfHeight]: !isFullHeight,
+            })}
+          >
             <GiftedChat
               showUserAvatar
               messages={messages.slice().reverse()}

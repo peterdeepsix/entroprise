@@ -1,4 +1,6 @@
 import React from "react"
+import { useStaticQuery, graphql } from "gatsby"
+import Img from "gatsby-image"
 
 import {
   Container,
@@ -10,8 +12,34 @@ import {
 } from "@material-ui/core"
 
 const IndexComponent = () => {
+  const data = useStaticQuery(graphql`
+    query {
+      placeholderImage: file(relativePath: { eq: "logo.png" }) {
+        childImageSharp {
+          fluid(maxWidth: 300) {
+            ...GatsbyImageSharpFluid
+          }
+        }
+      }
+    }
+  `)
   return (
     <Container maxWidth="sm">
+      <Box mt={2} mb={1}>
+        <Card variant="outlined">
+          <Box mx={8} my={3}>
+            <Img fluid={data.placeholderImage.childImageSharp.fluid} />
+          </Box>
+        </Card>
+      </Box>
+      <Box mt={2} mb={1}>
+        <Card variant="outlined">
+          <CardHeader title="Entroprise" subheader="" />
+          <CardContent>
+            <Typography variant="body1">Realtime Workforce Presence</Typography>
+          </CardContent>
+        </Card>
+      </Box>
       <Box mt={2} mb={1}>
         <Card variant="outlined">
           <CardHeader title="Strategy" />
