@@ -1,11 +1,56 @@
 import React, { useState } from "react"
 import firebase from "gatsby-plugin-firebase"
+import { SnackbarProvider, useSnackbar } from "notistack"
 
-import { Typography } from "@material-ui/core"
+import { makeStyles } from "@material-ui/core/styles"
+import {
+  Typography,
+  Button,
+  Snackbar,
+  IconButton,
+  Chip,
+  Avatar,
+  Toolbar,
+  Box,
+} from "@material-ui/core"
+import CloseIcon from "@material-ui/icons/Close"
+import FaceIcon from "@material-ui/icons/Face"
+import DoneIcon from "@material-ui/icons/Done"
 
-const NotificationsDialog = () => {
+const useStyles = makeStyles((theme) => ({
+  root: {
+    display: "flex",
+    justifyContent: "center",
+    flexWrap: "wrap",
+    "& > *": {
+      margin: theme.spacing(0.5),
+    },
+  },
+  grow: {
+    flexGrow: 1,
+  },
+}))
+
+const CustomSnackbar = () => {
+  const { enqueueSnackbar } = useSnackbar()
+
+  const classes = useStyles()
+  const [token, setToken] = useState("")
   const [title, setTitle] = useState("")
   const [options, setOptions] = useState("")
+  const [snackbarIsOpen, setSnackbarIsOpen] = useState(false)
+
+  const handleOpenSnackbar = () => {
+    setSnackbarIsOpen(true)
+  }
+
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === "clickaway") {
+      return
+    }
+
+    setSnackbarIsOpen(false)
+  }
 
   let messaging
 
@@ -18,6 +63,7 @@ const NotificationsDialog = () => {
         if (currentToken) {
           console.log("currentToken", currentToken)
           // sendTokenToServer(currentToken)
+          setToken(currentToken)
           // updateUIForPushEnabled(currentToken)
         } else {
           // Show permission request.
@@ -56,8 +102,8 @@ const NotificationsDialog = () => {
 
   messaging.onMessage((payload) => {
     console.log("payload", payload)
-    const title = payload.notification.title
-    const options = {
+    const newTitle = payload.notification.title
+    const newOptions = {
       body: payload.notification.body,
       icon: payload.notification.icon,
       actions: [
@@ -67,20 +113,102 @@ const NotificationsDialog = () => {
         },
       ],
     }
-    setTitle(title)
+    setTitle(newTitle)
     {
-      console.log("title", title)
+      console.log("newTitle", newTitle)
     }
-    setOptions(options)
+    setOptions(newOptions)
     {
-      console.log("options", options)
+      console.log("newOptions", newOptions)
     }
   })
+
+  const handleSystemError = () => {
+    enqueueSnackbar("Error", {
+      variant: "error",
+      anchorOrigin: {
+        vertical: "top",
+        horizontal: "center",
+      },
+    })
+  }
+
+  const handleSystemMessage = () => {
+    enqueueSnackbar("System Message", {
+      variant: "warning",
+      anchorOrigin: {
+        vertical: "top",
+        horizontal: "center",
+      },
+    })
+  }
+
+  const handleMessage = () => {
+    enqueueSnackbar("Message", {
+      anchorOrigin: {
+        vertical: "top",
+        horizontal: "center",
+      },
+    })
+  }
+
+  const handleAudio = () => {
+    enqueueSnackbar("Audio Call", {
+      variant: "info",
+      anchorOrigin: {
+        vertical: "top",
+        horizontal: "center",
+      },
+    })
+  }
+
+  const handleVideo = () => {
+    enqueueSnackbar("Video Call", {
+      variant: "success",
+      anchorOrigin: {
+        vertical: "top",
+        horizontal: "center",
+      },
+    })
+  }
+
   return (
     <>
-      <Typography>Notifications</Typography>
-      <Typography>{title}</Typography>
-      <Typography>{options}</Typography>
+      <Box m={2}>
+        <Button variant="outlined" onClick={handleSystemError}>
+          Preview Error
+        </Button>
+      </Box>
+      <Box m={2}>
+        <Button variant="outlined" onClick={handleSystemMessage}>
+          Preview System Message
+        </Button>
+      </Box>
+      <Box m={2}>
+        <Button variant="outlined" onClick={handleMessage}>
+          Preview Message
+        </Button>
+      </Box>
+      <Box m={2}>
+        <Button color="primary" variant="outlined" onClick={handleAudio}>
+          Preview Audi Call
+        </Button>
+      </Box>
+      <Box m={2}>
+        <Button color="primary" variant="contained" onClick={handleVideo}>
+          Preview Video Call
+        </Button>
+      </Box>
+    </>
+  )
+}
+
+const NotificationsDialog = () => {
+  return (
+    <>
+      <SnackbarProvider hideIconVariant={true} maxSnack={3}>
+        <CustomSnackbar />
+      </SnackbarProvider>
     </>
   )
 }

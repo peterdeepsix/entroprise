@@ -5,9 +5,97 @@ const AccessToken = require("twilio").jwt.AccessToken
 const VideoGrant = AccessToken.VideoGrant
 const ChatGrant = AccessToken.ChatGrant
 const MAX_ALLOWED_SESSION_DURATION = 14400
+const FIRESTORE_TOKEN_COLLECTION = "instance_tokens"
 
 admin.initializeApp()
 const firestore = admin.firestore()
+const messaging = admin.messaging()
+
+async function storeAppInstanceToken(token) {
+  try {
+    return await firestore
+      .collection(FIRESTORE_TOKEN_COLLECTION)
+      .add({ token, createdAt: admin.firestore.FieldValue.serverTimestamp() })
+  } catch (err) {
+    console.log(`Error storing token [${token}] in firestore`, err)
+    return null
+  }
+}
+
+async function deleteAppInstanceToken(token) {
+  try {
+    const deleteQuery = firestore
+      .collection(FIRESTORE_TOKEN_COLLECTION)
+      .where("token", "==", token)
+    const querySnapshot = await deleteQuery.get()
+    querySnapshot.docs.forEach(async (doc) => {
+      await doc.ref.delete()
+    })
+    return true
+  } catch (err) {
+    console.log(`Error deleting token [${token}] in firestore`, err)
+    return null
+  }
+}
+
+function buildCommonMessage(title, body) {
+  return {
+    notification: {
+      title: title,
+      body: body,
+    },
+  }
+}
+
+/**
+ * Builds message with platform specific options
+ * Link: https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages
+ */
+function buildPlatformMessage(token, title, body) {
+  const fcmMessage = buildCommonMessage(title, body)
+
+  const webpush = {
+    headers: {
+      TTL: "0",
+    },
+    notification: {
+      icon: "https://img.icons8.com/color/96/e74c3c/ireland.png",
+    },
+    fcm_options: {
+      link: "https://gnib-visa-app.rharshad.com",
+    },
+  }
+
+  fcmMessage["token"] = token
+  fcmMessage["webpush"] = webpush
+  return fcmMessage
+}
+
+async function sendFcmMessage(fcmMessage) {
+  try {
+    await messaging.send(fcmMessage)
+  } catch (err) {
+    console.log(err)
+  }
+}
+
+async function subscribeAppInstanceToTopic(token, topic) {
+  try {
+    return await messaging.subscribeToTopic(token, topic)
+  } catch (err) {
+    console.log(`Error subscribing token [${token}] to topic: `, err)
+    return null
+  }
+}
+
+async function unsubscribeAppInstanceFromTopic(token, topic) {
+  try {
+    return await messaging.unsubscribeFromTopic(token, topic)
+  } catch (err) {
+    console.log(`Error unsubscribing token [${token}] from topic: `, err)
+    return null
+  }
+}
 
 exports.onUserStatusChanged = functions.database
   .ref("/status/{uid}")
@@ -130,4 +218,99 @@ exports.chat = functions.https.onRequest((req, res) => {
   console.log(`issued token for ${identity}`)
   console.log(`token ${token}`)
   sendTokenResponse(token, res)
+})
+
+exports.storetoken = functions.https.onRequest(async (req, res) => {
+  console.log(`req`, req)
+  console.log(`res`, res)
+
+  res.set("Access-Control-Allow-Origin", "*")
+  res.set("Access-Control-Allow-Methods", "GET")
+  res.set("Access-Control-Allow-Headers", "Content-Type")
+  res.set("Access-Control-Max-Age", "3600")
+
+  if (req.method == "OPTIONS") {
+    res.status(204).send("")
+  }
+
+  if (!req.body) res.sendStatus(400)
+
+  if (req.body.token) {
+    result = await storeAppInstanceToken(req.body.token)
+    result ? res.sendStatus(200) : res.sendStatus(500)
+  } else {
+    res.sendStatus(400)
+  }
+})
+
+exports.subscribe = functions.https.onRequest(async (req, res) => {
+  console.log(`req`, req)
+  console.log(`res`, res)
+
+  res.set("Access-Control-Allow-Origin", "*")
+  res.set("Access-Control-Allow-Methods", "GET")
+  res.set("Access-Control-Allow-Headers", "Content-Type")
+  res.set("Access-Control-Max-Age", "3600")
+
+  if (req.method == "OPTIONS") {
+    res.status(204).send("")
+  }
+
+  if (!req.body) res.sendStatus(400)
+
+  if (req.body.token) {
+    result = await subscribeAppInstanceToTopic(req.body.token, req.body.topic)
+    result ? res.sendStatus(200) : res.sendStatus(500)
+  } else {
+    res.sendStatus(400)
+  }
+})
+
+exports.unsubscribe = functions.https.onRequest(async (req, res) => {
+  console.log(`req`, req)
+  console.log(`res`, res)
+
+  res.set("Access-Control-Allow-Origin", "*")
+  res.set("Access-Control-Allow-Methods", "GET")
+  res.set("Access-Control-Allow-Headers", "Content-Type")
+  res.set("Access-Control-Max-Age", "3600")
+
+  if (req.method == "OPTIONS") {
+    res.status(204).send("")
+  }
+
+  if (!req.body) res.sendStatus(400)
+
+  if (req.body.token) {
+    result = await unsubscribeAppInstanceFromTopic(
+      req.body.token,
+      req.body.topic
+    )
+    result ? res.sendStatus(200) : res.sendStatus(500)
+  } else {
+    res.sendStatus(400)
+  }
+})
+
+exports.deletetoken = functions.https.onRequest(async (req, res) => {
+  console.log(`req`, req)
+  console.log(`res`, res)
+
+  res.set("Access-Control-Allow-Origin", "*")
+  res.set("Access-Control-Allow-Methods", "GET")
+  res.set("Access-Control-Allow-Headers", "Content-Type")
+  res.set("Access-Control-Max-Age", "3600")
+
+  if (req.method == "OPTIONS") {
+    res.status(204).send("")
+  }
+
+  if (!req.body) res.sendStatus(400)
+
+  if (req.body.token) {
+    result = await deleteAppInstanceToken(req.body.token)
+    result ? res.sendStatus(204) : res.sendStatus(500)
+  } else {
+    res.sendStatus(400)
+  }
 })
