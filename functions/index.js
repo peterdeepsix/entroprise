@@ -177,9 +177,10 @@ exports.token = functions.https.onRequest((req, res) => {
       const querySnapshot = await deleteQuery.get()
       let targetID
       querySnapshot.docs.forEach(async (doc) => {
+        console.log("doc", doc)
         targetID = await doc.id
       })
-      console.log("targetID", targetID)
+
       return targetID
     } catch (err) {
       console.log(`Error finding target  [${targetToken}] in firestore`, err)
@@ -323,7 +324,7 @@ exports.deletetoken = functions.https.onRequest(async (req, res) => {
   console.log(`res`, res)
 
   res.set("Access-Control-Allow-Origin", "*")
-  res.set("Access-Control-Allow-Methods", "GET")
+  res.set("Access-Control-Allow-Methods", "DELETE")
   res.set("Access-Control-Allow-Headers", "Content-Type")
   res.set("Access-Control-Max-Age", "3600")
 

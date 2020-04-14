@@ -14,11 +14,6 @@ import {
   Toolbar,
   Box,
 } from "@material-ui/core"
-import ToggleButton from "@material-ui/lab/ToggleButton"
-import CloseIcon from "@material-ui/icons/Close"
-import FaceIcon from "@material-ui/icons/Face"
-import DoneIcon from "@material-ui/icons/Done"
-import CheckIcon from "@material-ui/icons/Check"
 
 const ROOT_URL = "https://us-central1-entroprise-production.cloudfunctions.net"
 
@@ -41,25 +36,12 @@ const CustomSnackbar = () => {
 
   const classes = useStyles()
   const [token, setToken] = useState("")
-  const [hasNotificationPermission, setHasNotificationPermission] = useState(
-    false
-  )
-
-  /**
-   * If registration token is available in localStorage we enable the subscription option to indicate that the user has
-   * already subscribed
-   */
-  useEffect(() => {
-    localStorage.getItem("NOTIFICATION_SUBSCRIBED") === "TRUE"
-      ? setHasNotificationPermission(true)
-      : setHasNotificationPermission(false)
-  }, [])
 
   /**
    * Store app instance tokens in firestore
-   * @param {*} token
    */
   const sendTokenToDb = async (token) => {
+    console.log("sendTokenToDb")
     try {
       await axios.post(`${ROOT_URL}/storetoken`, { token })
     } catch (error) {
@@ -78,6 +60,7 @@ const CustomSnackbar = () => {
    * If there are no active subscriptions then we delete the token from firestore
    */
   const deleteTokenFromDb = async () => {
+    console.log("deleteTokenFromDb")
     try {
       if (localStorage.getItem("NOTIFICATION_SUBSCRIBED") === null) {
         const token = localStorage.getItem("INSTANCE_TOKEN")
@@ -97,6 +80,7 @@ const CustomSnackbar = () => {
   }
 
   const notificationPermission = async () => {
+    console.log("notificationPermission")
     let permissionGranted = false
     try {
       /* request permission if not granted */
@@ -155,6 +139,7 @@ const CustomSnackbar = () => {
    * Subscribe app instance to notification topic if user permissions given
    */
   const subscribeNotifications = async () => {
+    console.log("subscribeNotifications")
     const canNotificationPermission = await notificationPermission()
     if (canNotificationPermission) {
       const isSubscribed = await subscriptionActions(
@@ -177,6 +162,7 @@ const CustomSnackbar = () => {
    * Unsubscribe app instance from notification topic
    */
   const unsubscribeNotifications = async () => {
+    console.log("unsubscribeNotifications")
     const isUnSubscribed = await subscriptionActions(
       "unsubscribe",
       localStorage.getItem("INSTANCE_TOKEN"),
@@ -195,9 +181,11 @@ const CustomSnackbar = () => {
   // - send messages back to this app
   // - subscribe/unsubscribe the token from topics
   async function sendTokenToServer(currentToken) {
+    console.log("sendTokenToServer")
     if (!isTokenSentToServer()) {
       console.log("Sending token to server...")
-      await sendTokenToDb(token)
+      await sendTokenToDb(currentToken)
+      console.log("Send complete.")
       setTokenSentToServer(true)
     } else {
       console.log(
@@ -219,42 +207,31 @@ const CustomSnackbar = () => {
 
   // we need to check if messaging is supported by the browser
   if (firebase.messaging.isSupported()) {
+    console.log("messagin isSupported")
     messaging = firebase.messaging()
     messaging
       .getToken()
-      .then(async (currentToken) => {
+      .then((currentToken) => {
+        console.log("getToken")
         if (currentToken) {
-          console.log("currenttoken", currentToken)
-          const storeToken = await subscriptionActions(
-            "storetoken",
-            localStorage.getItem("INSTANCE_TOKEN"),
-            "test"
-          )
-          if (storeToken) {
-            handleSystemMessage("storetoken - sucess")
-          } else {
-            handleSystemError("storetoken - fail")
-          }
-          setToken(currentToken)
-          // updateUIForPushEnabled(currentToken)
+          sendTokenToServer(currentToken)
         } else {
+          notificationPermission()
           console.log(
             "No Instance ID token available. Request permission to generate one."
           )
-          // Show permission UI. Show permission request.
-          notificationPermission()
-
-          // updateUIForPushPermissionRequired()
-          // setTokenSentToServer(false)
+          // Show permission UI.
+          setTokenSentToServer(false)
         }
       })
       .catch((err) => {
         console.log("An error occurred while retrieving token. ", err)
-        // showToken("Error retrieving Instance ID token. ", err)
-        // setTokenSentToServer(false)
+        setTokenSentToServer(false)
       })
+
     // Callback fired if Instance ID token is updated.
     messaging.onTokenRefresh(() => {
+      console.log("onTokenRefresh")
       messaging
         .getToken()
         .then((refreshedToken) => {
@@ -268,7 +245,6 @@ const CustomSnackbar = () => {
         })
         .catch((err) => {
           console.log("Unable to retrieve refreshed token ", err)
-          // showToken("Unable to retrieve refreshed token ", err)
         })
     })
   }
@@ -347,21 +323,6 @@ const CustomSnackbar = () => {
       <Box m={2}>
         <Button variant="outlined" onClick={unsubscribeNotifications}>
           unsubscribeNotifications
-        </Button>
-      </Box>
-      <Box m={2}>
-        <Button color="primary" variant="outlined" onClick={handleMessage}>
-          Preview Message
-        </Button>
-      </Box>
-      <Box m={2}>
-        <Button color="primary" variant="outlined" onClick={handleAudio}>
-          Preview Audio Call
-        </Button>
-      </Box>
-      <Box m={2}>
-        <Button color="primary" variant="outlined" onClick={handleVideo}>
-          Preview Video Call
         </Button>
       </Box>
     </>
