@@ -41,17 +41,9 @@ const CustomSnackbar = () => {
 
   const classes = useStyles()
   const [token, setToken] = useState("")
-  const [snackbarIsOpen, setSnackbarIsOpen] = useState(false)
   const [hasNotificationPermission, setHasNotificationPermission] = useState(
     false
   )
-  const [isSubscribed, setIsSubscribed] = useState(false)
-
-  useEffect(() => {
-    localStorage.getItem("NOTIFICATION_SUBSCRIBED") === "TRUE"
-      ? setHasNotificationPermission(true)
-      : setHasNotificationPermission(false)
-  }, [])
 
   /**
    * If registration token is available in localStorage we enable the subscription option to indicate that the user has
@@ -63,16 +55,45 @@ const CustomSnackbar = () => {
       : setHasNotificationPermission(false)
   }, [])
 
-  const handleOpenSnackbar = () => {
-    setSnackbarIsOpen(true)
+  /**
+   * Store app instance tokens in firestore
+   * @param {*} token
+   */
+  const sendTokenToDb = async (token) => {
+    try {
+      await axios.post(`${ROOT_URL}/storetoken`, { token })
+    } catch (error) {
+      if (error.response) {
+        console.log(error.response.status)
+        console.log(error.response.data)
+      } else if (error.request) {
+        console.log(error.request)
+      } else {
+        console.log("Error: ", error.message)
+      }
+    }
   }
 
-  const handleCloseSnackbar = (event, reason) => {
-    if (reason === "clickaway") {
-      return
+  /**
+   * If there are no active subscriptions then we delete the token from firestore
+   */
+  const deleteTokenFromDb = async () => {
+    try {
+      if (localStorage.getItem("NOTIFICATION_SUBSCRIBED") === null) {
+        const token = localStorage.getItem("INSTANCE_TOKEN")
+        await axios.delete(`${ROOT_URL}/deletetoken`, { data: { token } })
+        localStorage.removeItem("INSTANCE_TOKEN")
+      }
+    } catch (err) {
+      if (err.response) {
+        console.log(err.response.status)
+        console.log(err.response.data)
+      } else if (err.request) {
+        console.log(err.request)
+      } else {
+        console.log("Error: ", err.message)
+      }
     }
-
-    setSnackbarIsOpen(false)
   }
 
   const notificationPermission = async () => {
@@ -87,7 +108,7 @@ const CustomSnackbar = () => {
         permissionGranted = true
       } else {
         const token = await messaging.getToken() // returns the same token on every invocation until refreshed by browser
-        // await this.sendTokenToDb(token)
+        await sendTokenToServer(token)
         localStorage.setItem("INSTANCE_TOKEN", token)
         permissionGranted = true
       }
@@ -143,7 +164,6 @@ const CustomSnackbar = () => {
       )
       if (isSubscribed) {
         localStorage.setItem("NOTIFICATION_SUBSCRIBED", "TRUE")
-        setIsSubscribed(true)
         handleSystemMessage(
           "Push notifications have been enabled for your device."
         )
@@ -164,12 +184,35 @@ const CustomSnackbar = () => {
     )
     if (isUnSubscribed) {
       localStorage.removeItem("NOTIFICATION_SUBSCRIBED")
-      // await deleteTokenFromDb()
-      setIsSubscribed(false)
+      await deleteTokenFromDb()
       handleSystemMessage("You have been unsubscribed from notifications.")
     } else {
       handleSystemError("Failed to unsubscribe you from push notifications.")
     }
+  }
+
+  // Send the Instance ID token your application server, so that it can:
+  // - send messages back to this app
+  // - subscribe/unsubscribe the token from topics
+  async function sendTokenToServer(currentToken) {
+    if (!isTokenSentToServer()) {
+      console.log("Sending token to server...")
+      await sendTokenToDb(token)
+      setTokenSentToServer(true)
+    } else {
+      console.log(
+        "Token already sent to server so won't send it again " +
+          "unless it changes"
+      )
+    }
+  }
+
+  function isTokenSentToServer() {
+    return window.localStorage.getItem("sentToServer") === "1"
+  }
+
+  function setTokenSentToServer(sent) {
+    window.localStorage.setItem("sentToServer", sent ? "1" : "0")
   }
 
   let messaging
@@ -179,10 +222,19 @@ const CustomSnackbar = () => {
     messaging = firebase.messaging()
     messaging
       .getToken()
-      .then((currentToken) => {
+      .then(async (currentToken) => {
         if (currentToken) {
-          console.log("currentToken", currentToken)
-          // sendTokenToServer(currentToken)
+          console.log("currenttoken", currentToken)
+          const storeToken = await subscriptionActions(
+            "storetoken",
+            localStorage.getItem("INSTANCE_TOKEN"),
+            "test"
+          )
+          if (storeToken) {
+            handleSystemMessage("storetoken - sucess")
+          } else {
+            handleSystemError("storetoken - fail")
+          }
           setToken(currentToken)
           // updateUIForPushEnabled(currentToken)
         } else {
@@ -209,9 +261,9 @@ const CustomSnackbar = () => {
           console.log("Token refreshed.", refreshedToken)
           // Indicate that the new Instance ID token has not yet been sent to the
           // app server.
-          // setTokenSentToServer(false)
+          setTokenSentToServer(false)
           // Send Instance ID token to app server.
-          // sendTokenToServer(refreshedToken)
+          sendTokenToServer(refreshedToken)
           // ...
         })
         .catch((err) => {
@@ -224,16 +276,6 @@ const CustomSnackbar = () => {
   messaging.onMessage((payload) => {
     console.log("payload", payload)
     const newTitle = payload.notification.title
-    const newOptions = {
-      body: payload.notification.body,
-      icon: payload.notification.icon,
-      actions: [
-        {
-          action: payload.fcmOptions.link,
-          title: "Notification Test Title",
-        },
-      ],
-    }
     enqueueSnackbar(newTitle, {
       anchorOrigin: {
         vertical: "top",

@@ -51,7 +51,7 @@ function buildCommonMessage(title, body) {
  * Builds message with platform specific options
  * Link: https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages
  */
-function buildPlatformMessage(token, title, body) {
+function buildPlatformMessage(token, title, body, link) {
   const fcmMessage = buildCommonMessage(title, body)
 
   const webpush = {
@@ -59,10 +59,10 @@ function buildPlatformMessage(token, title, body) {
       TTL: "0",
     },
     notification: {
-      icon: "https://img.icons8.com/color/96/e74c3c/ireland.png",
+      icon: "https://cdn.britannica.com/32/122932-050-43EE55D3/Elk.jpg",
     },
     fcm_options: {
-      link: "https://gnib-visa-app.rharshad.com",
+      link: link,
     },
   }
 
@@ -168,6 +168,32 @@ exports.token = functions.https.onRequest((req, res) => {
   const identity = req.body.identity
   const roomName = req.body.roomName
   const token = videoToken(identity, roomName)
+
+  const target = async (targetToken) => {
+    try {
+      const deleteQuery = firestore
+        .collection(FIRESTORE_TOKEN_COLLECTION)
+        .where("token", "==", targetToken)
+      const querySnapshot = await deleteQuery.get()
+      let targetID
+      querySnapshot.docs.forEach(async (doc) => {
+        targetID = await doc.id
+      })
+      console.log("targetID", targetID)
+      return targetID
+    } catch (err) {
+      console.log(`Error finding target  [${targetToken}] in firestore`, err)
+      return null
+    }
+  }
+
+  const message = buildPlatformMessage(
+    target(roomName),
+    `title - ${roomName}`,
+    `body - ${identity}`,
+    `/app/thread/${roomName}`
+  )
+  sendFcmMessage(message)
   console.log(`issued token for ${identity} in room ${roomName}`)
   console.log(`token ${token}`)
   sendTokenResponse(token, res)
