@@ -1,7 +1,9 @@
 import React, { useEffect, useState, useMemo } from "react"
 import firebase from "gatsby-plugin-firebase"
+import LogRocket from "logrocket"
 
 const AuthLayout = ({ children }) => {
+  const analytics = firebase.analytics()
   const auth = firebase.auth()
   const rtdb = firebase.database()
   const firestoreRef = firebase.firestore()
@@ -36,13 +38,16 @@ const AuthLayout = ({ children }) => {
   auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
 
   // listen for auth change
-  auth.onAuthStateChanged((user) => {
+  auth.onAuthStateChanged(async (user) => {
     if (user) {
-      // LogRocket.identify(user.uid, {
-      //   name: user.displayName,
-      //   email: user.email,
-      //   isAnonymous: true,
-      // })
+      analytics.setUserId(user.id)
+      LogRocket.identify(user.uid, {
+        name: user.displayName,
+        email: user.email,
+        isAnonymous: user.isAnonymous,
+      })
+      console.log("Log Rocket Identify", user.displayName)
+
       const firestoreUserStatusRef = firestoreRef.doc(`users/${user.uid}/`)
       firestoreUserStatusRef
         .set(
@@ -70,6 +75,8 @@ const AuthLayout = ({ children }) => {
         .auth()
         .signInAnonymously()
         .then((result) => {
+          const method = result.credential.signInMethod
+          analytics.logEvent("login", { method })
           firestoreUsersRef.doc(result.user.uid).set(
             {
               displayName: result.user.displayName,

@@ -11,34 +11,8 @@ admin.initializeApp()
 const firestore = admin.firestore()
 const messaging = admin.messaging()
 
-async function storeAppInstanceToken(token) {
-  try {
-    return await firestore
-      .collection(FIRESTORE_TOKEN_COLLECTION)
-      .add({ token, createdAt: admin.firestore.FieldValue.serverTimestamp() })
-  } catch (err) {
-    console.log(`Error storing token [${token}] in firestore`, err)
-    return null
-  }
-}
-
-async function deleteAppInstanceToken(token) {
-  try {
-    const deleteQuery = firestore
-      .collection(FIRESTORE_TOKEN_COLLECTION)
-      .where("token", "==", token)
-    const querySnapshot = await deleteQuery.get()
-    querySnapshot.docs.forEach(async (doc) => {
-      await doc.ref.delete()
-    })
-    return true
-  } catch (err) {
-    console.log(`Error deleting token [${token}] in firestore`, err)
-    return null
-  }
-}
-
 function buildCommonMessage(title, body) {
+  console.log("buildCommonMessage")
   return {
     notification: {
       title: title,
@@ -47,11 +21,8 @@ function buildCommonMessage(title, body) {
   }
 }
 
-/**
- * Builds message with platform specific options
- * Link: https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages
- */
-function buildPlatformMessage(token, title, body, link) {
+function buildPlatformMessage(topic, title, body, link) {
+  console.log("buildPlatformMessage")
   const fcmMessage = buildCommonMessage(title, body)
 
   const webpush = {
@@ -66,34 +37,17 @@ function buildPlatformMessage(token, title, body, link) {
     },
   }
 
-  fcmMessage["token"] = token
+  fcmMessage["topic"] = topic
   fcmMessage["webpush"] = webpush
   return fcmMessage
 }
 
 async function sendFcmMessage(fcmMessage) {
+  console.log("sendFcmMessage")
   try {
     await messaging.send(fcmMessage)
   } catch (err) {
     console.log(err)
-  }
-}
-
-async function subscribeAppInstanceToTopic(token, topic) {
-  try {
-    return await messaging.subscribeToTopic(token, topic)
-  } catch (err) {
-    console.log(`Error subscribing token [${token}] to topic: `, err)
-    return null
-  }
-}
-
-async function unsubscribeAppInstanceFromTopic(token, topic) {
-  try {
-    return await messaging.unsubscribeFromTopic(token, topic)
-  } catch (err) {
-    console.log(`Error unsubscribing token [${token}] from topic: `, err)
-    return null
   }
 }
 
@@ -169,33 +123,15 @@ exports.token = functions.https.onRequest((req, res) => {
   const roomName = req.body.roomName
   const token = videoToken(identity, roomName)
 
-  const target = async (targetToken) => {
-    try {
-      const deleteQuery = firestore
-        .collection(FIRESTORE_TOKEN_COLLECTION)
-        .where("token", "==", targetToken)
-      const querySnapshot = await deleteQuery.get()
-      let targetID
-      querySnapshot.docs.forEach(async (doc) => {
-        console.log("doc", doc)
-        targetID = await doc.id
-      })
-
-      return targetID
-    } catch (err) {
-      console.log(`Error finding target  [${targetToken}] in firestore`, err)
-      return null
-    }
-  }
-
   const message = buildPlatformMessage(
-    target(roomName),
-    `title - ${roomName}`,
-    `body - ${identity}`,
+    "test",
+    `Video Call: ${identity}`,
+    `Room Name: ${roomName}`,
     `/app/thread/${roomName}`
   )
+  console.log(`message ${message}`)
   sendFcmMessage(message)
-  console.log(`issued token for ${identity} in room ${roomName}`)
+  console.log(`issued token for identify:${identity} in roomName:${roomName}`)
   console.log(`token ${token}`)
   sendTokenResponse(token, res)
 })
@@ -248,8 +184,18 @@ exports.chat = functions.https.onRequest((req, res) => {
 })
 
 exports.storetoken = functions.https.onRequest(async (req, res) => {
-  console.log(`req`, req)
-  console.log(`res`, res)
+  console.log(`storetoken`)
+  async function storeAppInstanceToken(token) {
+    console.log("storeAppInstanceToken")
+    try {
+      return await firestore
+        .collection(FIRESTORE_TOKEN_COLLECTION)
+        .add({ token, createdAt: admin.firestore.FieldValue.serverTimestamp() })
+    } catch (err) {
+      console.log(`Error storing token [${token}] in firestore`, err)
+      return null
+    }
+  }
 
   res.set("Access-Control-Allow-Origin", "*")
   res.set("Access-Control-Allow-Methods", "GET")
@@ -271,8 +217,16 @@ exports.storetoken = functions.https.onRequest(async (req, res) => {
 })
 
 exports.subscribe = functions.https.onRequest(async (req, res) => {
-  console.log(`req`, req)
-  console.log(`res`, res)
+  console.log(`subscribe`)
+  async function subscribeAppInstanceToTopic(token, topic) {
+    console.log("subscribeAppInstanceToTopic")
+    try {
+      return await messaging.subscribeToTopic(token, topic)
+    } catch (err) {
+      console.log(`Error subscribing token [${token}] to topic: `, err)
+      return null
+    }
+  }
 
   res.set("Access-Control-Allow-Origin", "*")
   res.set("Access-Control-Allow-Methods", "GET")
@@ -294,8 +248,16 @@ exports.subscribe = functions.https.onRequest(async (req, res) => {
 })
 
 exports.unsubscribe = functions.https.onRequest(async (req, res) => {
-  console.log(`req`, req)
-  console.log(`res`, res)
+  console.log(`unsubscribe`)
+  async function unsubscribeAppInstanceFromTopic(token, topic) {
+    console.log("unsubscribeFromTopic")
+    try {
+      return await messaging.unsubscribeFromTopic(token, topic)
+    } catch (err) {
+      console.log(`Error unsubscribing token [${token}] from topic: `, err)
+      return null
+    }
+  }
 
   res.set("Access-Control-Allow-Origin", "*")
   res.set("Access-Control-Allow-Methods", "GET")
@@ -320,8 +282,24 @@ exports.unsubscribe = functions.https.onRequest(async (req, res) => {
 })
 
 exports.deletetoken = functions.https.onRequest(async (req, res) => {
-  console.log(`req`, req)
-  console.log(`res`, res)
+  console.log(`deletetoken`)
+
+  async function deleteAppInstanceToken(token) {
+    console.log("deleteAppInstanceToken")
+    try {
+      const deleteQuery = firestore
+        .collection(FIRESTORE_TOKEN_COLLECTION)
+        .where("token", "==", token)
+      const querySnapshot = await deleteQuery.get()
+      querySnapshot.docs.forEach(async (doc) => {
+        await doc.ref.delete()
+      })
+      return true
+    } catch (err) {
+      console.log(`Error deleting token [${token}] in firestore`, err)
+      return null
+    }
+  }
 
   res.set("Access-Control-Allow-Origin", "*")
   res.set("Access-Control-Allow-Methods", "DELETE")

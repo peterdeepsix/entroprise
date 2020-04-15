@@ -8,10 +8,12 @@ import {
   Card,
   List,
   CardHeader,
+  CardContent,
   ListItem,
   ListItemText,
   ListItemAvatar,
 } from "@material-ui/core"
+import Skeleton from "@material-ui/lab/Skeleton"
 
 import { makeStyles, withStyles } from "@material-ui/core/styles"
 
@@ -66,59 +68,61 @@ const UsersList = () => {
   return (
     <Card variant="outlined">
       <CardHeader title="User List" />
-      <List className={classes.root}>
-        {users && (
-          <>
-            {users.docs.map((doc) => {
-              const data = doc.data()
-              if (data.status) {
-                if (data.displayName == null && data.status.state == "offline")
-                  return
-              }
-              return (
-                <ListItem
-                  component={LinkComponent}
-                  button
-                  to={`/app/thread/${data.uid}`}
-                  key={doc.id}
-                >
-                  {doc.data().status && (
-                    <>
-                      {(doc.data().status.state == "online" && (
-                        <ListItemAvatar>
-                          <StyledBadge
-                            overlap="circle"
-                            anchorOrigin={{
-                              vertical: "bottom",
-                              horizontal: "right",
-                            }}
-                            variant="dot"
-                          >
-                            <Avatar
-                              src={data.photoURL}
-                              alt={data.displayName}
-                            />
-                          </StyledBadge>
-                        </ListItemAvatar>
-                      )) || (
-                        <ListItemAvatar>
+
+      {(users && (
+        <List className={classes.root}>
+          {users.docs.map((doc) => {
+            const data = doc.data()
+            if (data.status) {
+              if (data.displayName == null && data.status.state == "offline")
+                return
+            }
+            return (
+              <ListItem
+                component={LinkComponent}
+                button
+                to={`/app/thread/${data.uid}`}
+                key={doc.id}
+              >
+                {doc.data().status && (
+                  <>
+                    {(doc.data().status.state == "online" && (
+                      <ListItemAvatar>
+                        <StyledBadge
+                          overlap="circle"
+                          anchorOrigin={{
+                            vertical: "bottom",
+                            horizontal: "right",
+                          }}
+                          variant="dot"
+                        >
                           <Avatar src={data.photoURL} alt={data.displayName} />
-                        </ListItemAvatar>
-                      )}
-                    </>
-                  )}
-                  <ListItemText
-                    primary={
-                      (data.isAnonymous && "Anonymous User") || data.displayName
-                    }
-                    secondary={doc.id}
-                  />
-                </ListItem>
-              )
-            })}
-          </>
-        )}
-      </List>
+                        </StyledBadge>
+                      </ListItemAvatar>
+                    )) || (
+                      <ListItemAvatar>
+                        <Avatar src={data.photoURL} alt={data.displayName} />
+                      </ListItemAvatar>
+                    )}
+                  </>
+                )}
+                <ListItemText
+                  primary={
+                    (data.isAnonymous && "Anonymous User") || data.displayName
+                  }
+                  secondary={doc.id}
+                />
+              </ListItem>
+            )
+          })}
+        </List>
+      )) || (
+        <CardContent>
+          <Skeleton variant="text" />
+          <Skeleton variant="circle" width={40} height={40} />
+          <Skeleton variant="rect" width={210} height={118} />
+        </CardContent>
+      )}
     </Card>
   )
 }

@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useRef } from "react"
+import { navigate } from "gatsby"
 import firebase from "gatsby-plugin-firebase"
 import { SnackbarProvider, useSnackbar } from "notistack"
 import axios from "axios"
@@ -14,6 +15,9 @@ import {
   Toolbar,
   Box,
 } from "@material-ui/core"
+import VideocamOutlinedIcon from "@material-ui/icons/VideocamOutlined"
+import PhoneOutlinedIcon from "@material-ui/icons/PhoneOutlined"
+import ChatOutlinedIcon from "@material-ui/icons/ChatOutlined"
 
 const ROOT_URL = "https://us-central1-entroprise-production.cloudfunctions.net"
 
@@ -35,7 +39,11 @@ const CustomSnackbar = () => {
   const { enqueueSnackbar } = useSnackbar()
 
   const classes = useStyles()
-  const [token, setToken] = useState("")
+  const [isSubscribed, setIsSubscribed] = useState(false)
+
+  useEffect(() => {
+    if (!isSubscribed) subscribeNotifications()
+  }, [isSubscribed])
 
   /**
    * Store app instance tokens in firestore
@@ -142,18 +150,18 @@ const CustomSnackbar = () => {
     console.log("subscribeNotifications")
     const canNotificationPermission = await notificationPermission()
     if (canNotificationPermission) {
-      const isSubscribed = await subscriptionActions(
+      const checkIsSubscribed = await subscriptionActions(
         "subscribe",
         localStorage.getItem("INSTANCE_TOKEN"),
         "test"
       )
-      if (isSubscribed) {
+      if (checkIsSubscribed) {
         localStorage.setItem("NOTIFICATION_SUBSCRIBED", "TRUE")
-        handleSystemMessage(
-          "Push notifications have been enabled for your device."
-        )
+        setIsSubscribed(true)
+        console.log("Push notifications have been enabled for your device.")
       } else {
         handleSystemError("Unable to subscribe you to push notifications.")
+        setIsSubscribed(false)
       }
     }
   }
@@ -170,6 +178,7 @@ const CustomSnackbar = () => {
     )
     if (isUnSubscribed) {
       localStorage.removeItem("NOTIFICATION_SUBSCRIBED")
+      setIsSubscribed(false)
       await deleteTokenFromDb()
       handleSystemMessage("You have been unsubscribed from notifications.")
     } else {
@@ -252,16 +261,21 @@ const CustomSnackbar = () => {
   messaging.onMessage((payload) => {
     console.log("payload", payload)
     const newTitle = payload.notification.title
-    enqueueSnackbar(newTitle, {
+    handleVideoCall(newTitle)
+  })
+
+  const handleVideoCall = (title) => {
+    enqueueSnackbar(title, {
+      variant: "success",
       anchorOrigin: {
         vertical: "top",
         horizontal: "center",
       },
     })
-  })
+  }
 
-  const handleSystemError = () => {
-    enqueueSnackbar("Error", {
+  const handleSystemError = (error) => {
+    enqueueSnackbar(error, {
       variant: "error",
       anchorOrigin: {
         vertical: "top",
@@ -272,7 +286,6 @@ const CustomSnackbar = () => {
 
   const handleSystemMessage = (message) => {
     enqueueSnackbar(message, {
-      variant: "warning",
       anchorOrigin: {
         vertical: "top",
         horizontal: "center",
@@ -280,59 +293,40 @@ const CustomSnackbar = () => {
     })
   }
 
-  const handleMessage = () => {
-    enqueueSnackbar("Message", {
-      anchorOrigin: {
-        vertical: "top",
-        horizontal: "center",
-      },
-    })
-  }
-
-  const handleAudio = () => {
-    enqueueSnackbar("Audio Call", {
-      variant: "info",
-      anchorOrigin: {
-        vertical: "top",
-        horizontal: "center",
-      },
-    })
-  }
-
-  const handleVideo = () => {
-    enqueueSnackbar("Video Call", {
-      variant: "success",
-      anchorOrigin: {
-        vertical: "top",
-        horizontal: "center",
-      },
-    })
-  }
-
-  return (
-    <>
-      <Box m={2}>
-        <Button
-          color="primary"
-          variant="contained"
-          onClick={subscribeNotifications}
-        >
-          subscribeNotifications
-        </Button>
-      </Box>
-      <Box m={2}>
-        <Button variant="outlined" onClick={unsubscribeNotifications}>
-          unsubscribeNotifications
-        </Button>
-      </Box>
-    </>
-  )
+  return <></>
 }
 
 const NotificationsDialog = () => {
+  const notistackRef = useRef()
+  const onClickDismiss = (key) => () => {
+    notistackRef.current.closeSnackbar(key)
+  }
+
   return (
     <>
-      <SnackbarProvider hideIconVariant={true} maxSnack={3}>
+      <SnackbarProvider
+        ref={notistackRef}
+        action={(key) => (
+          <>
+            <Button
+              variant="outlined"
+              color="inherit"
+              onClick={() => navigate(`/app/thread/${key}`)}
+            >
+              Recieve Call
+            </Button>
+            <Button color="inherit" onClick={onClickDismiss(key)}>
+              Dismiss
+            </Button>
+          </>
+        )}
+        iconVariant={{
+          success: <VideocamOutlinedIcon />,
+          warning: <ChatOutlinedIcon />,
+          info: <PhoneOutlinedIcon />,
+        }}
+        maxSnack={3}
+      >
         <CustomSnackbar />
       </SnackbarProvider>
     </>
