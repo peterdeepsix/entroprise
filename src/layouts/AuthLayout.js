@@ -1,7 +1,9 @@
 import React, { useEffect, useState, useMemo } from "react"
 import firebase from "gatsby-plugin-firebase"
+import LogRocket from "logrocket"
 
 const AuthLayout = ({ children }) => {
+  const analytics = firebase.analytics()
   const auth = firebase.auth()
   const rtdb = firebase.database()
   const firestoreRef = firebase.firestore()
@@ -36,10 +38,16 @@ const AuthLayout = ({ children }) => {
   auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
 
   // listen for auth change
-  auth.onAuthStateChanged(user => {
-    console.log("onAuthStateChange", user)
+  auth.onAuthStateChanged(async (user) => {
     if (user) {
-      console.log("AuthLayout, onAuthStateChanged, user, logLoot()")
+      analytics.setUserId(user.id)
+      LogRocket.identify(user.uid, {
+        name: user.displayName,
+        email: user.email,
+        isAnonymous: user.isAnonymous,
+      })
+      console.log("Log Rocket Identify", user.displayName)
+
       const firestoreUserStatusRef = firestoreRef.doc(`users/${user.uid}/`)
       firestoreUserStatusRef
         .set(
@@ -57,17 +65,18 @@ const AuthLayout = ({ children }) => {
           },
           { merge: true }
         )
-        .catch(error => {
+        .catch((error) => {
           console.log(error.code)
           console.log(error.message)
         })
     }
     if (!user) {
-      console.log("AuthLayout, onAuthStateChanged, !user, signInAnonymously()")
       firebase
         .auth()
         .signInAnonymously()
-        .then(result => {
+        .then((result) => {
+          const method = result.credential.signInMethod
+          analytics.logEvent("login", { method })
           firestoreUsersRef.doc(result.user.uid).set(
             {
               displayName: result.user.displayName,
@@ -83,7 +92,7 @@ const AuthLayout = ({ children }) => {
             { merge: true }
           )
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(error.code)
           console.log(error.message)
         })
@@ -91,9 +100,7 @@ const AuthLayout = ({ children }) => {
   })
 
   // listen for changes in RTDB active connections and update RTDB and Firestore
-  rtdb.ref(".info/connected").on("value", snapshot => {
-    console.log("AuthLayout, rtdb.ref(info/connected).on")
-
+  rtdb.ref(".info/connected").on("value", (snapshot) => {
     // listen for disconnect to RTDB if user
     if (auth.currentUser) {
       const uid = auth.currentUser.uid
@@ -102,7 +109,6 @@ const AuthLayout = ({ children }) => {
 
       // IF RTDB ".info/connected" is false then set Firestore to offline
       if (snapshot.val() === false) {
-        console.log("RTDB snapshot false")
         userStatusFirestoreRef.set(isOfflineForFirestore, { merge: true })
         return
       }
@@ -113,7 +119,6 @@ const AuthLayout = ({ children }) => {
         .onDisconnect()
         .set(isOfflineForDatabase)
         .then(() => {
-          console.log("onDisconnect")
           userStatusDatabaseRef.set(isOnlineForDatabase)
           userStatusFirestoreRef.set(isOnlineForFirestore, { merge: true })
         })

@@ -30,27 +30,33 @@ const SigninPageComponent = Loadable(
   }
 )
 
+const ListPage = Loadable(() => import("src/containers/ListPage"), {
+  fallback: <IndefiniteLoading message="ListPage" />,
+})
+
+const TreePage = Loadable(() => import("src/containers/TreePage"), {
+  fallback: <IndefiniteLoading message="TreePage" />,
+})
+
+const MapPage = Loadable(() => import("src/containers/MapPage"), {
+  fallback: <IndefiniteLoading message="MapPage" />,
+})
+
 const AccountPage = Loadable(() => import("src/containers/AccountPage"), {
   fallback: <IndefiniteLoading message="AccountPage" />,
 })
 
-const UsersPage = Loadable(() => import("src/containers/UsersPage"), {
-  fallback: <IndefiniteLoading message="UsersPage" />,
+const TensorFlowPage = Loadable(() => import("src/containers/TensorFlowPage"), {
+  fallback: <IndefiniteLoading message="TensorFlowPage" />,
 })
 
-const GraphPageComponent = Loadable(
-  () => import("src/components/GraphPage/GraphPageComponent"),
-  {
-    fallback: <IndefiniteLoading message="GraphPageComponent" />,
-  }
-)
+const ThreadPage = Loadable(() => import("src/containers/ThreadPage"), {
+  fallback: <IndefiniteLoading message="ThreadPage" />,
+})
 
-const TreePageComponent = Loadable(
-  () => import("src/components/TreePage/TreePageComponent"),
-  {
-    fallback: <IndefiniteLoading message="TreePageComponent" />,
-  }
-)
+const TimelinePage = Loadable(() => import("src/containers/TimelinePage"), {
+  fallback: <IndefiniteLoading message="Timeline" />,
+})
 
 const IndexPage = ({ location }) => {
   return (
@@ -59,17 +65,14 @@ const IndexPage = ({ location }) => {
       <Router>
         <AppPageComponent path="/app" />
         <SigninPageComponent path="/app/signin" />
-        <UsersPage path="/app/users" />
         <AccountPage path="/app/account" />
-        <TreePageComponent path="/app/tree" />
-        <GraphPageComponent path="/app/graph" />
+        <ListPage path="/app/list" />
+        <TreePage path="/app/tree" />
+        <MapPage path="/app/map" />
+        <TimelinePage path="/app/timeline" />
+        <TensorFlowPage path="/app/tensorflow" />
+        <ThreadPage path="/app/thread/:uid" />
         {/* <PrivateRouteComponent path="/app" component={AppPageComponent} /> */}
-        {/* <PrivateRouteComponent
-          path="/app/graph"
-          component={GraphPageComponent}
-        /> */}
-        {/* <PrivateRouteComponent path="/app/tree" component={TreePageComponent} /> */}
-        {/* <PrivateRouteComponent path="/app/account" component={AccountPage} /> */}
       </Router>
     </InterfaceLayout>
   )

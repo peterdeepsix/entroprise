@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 import { navigate } from "gatsby"
 
 import { fade, makeStyles } from "@material-ui/core/styles"
@@ -15,13 +15,30 @@ import {
   useScrollTrigger,
   Slide,
   IconButton,
+  Chip,
+  Avatar,
+  Select,
+  FormControl,
+  InputLabel,
+  FormHelperText,
+  MenuItem,
 } from "@material-ui/core"
-import SearchOutlinedIcon from "@material-ui/icons/SearchOutlined"
 import AccountCircleOutlinedIcon from "@material-ui/icons/AccountCircleOutlined"
+import FaceOutlinedIcon from "@material-ui/icons/FaceOutlined"
+import ArrowDropDownOutlined from "@material-ui/icons/ArrowDropDownOutlined"
+import SearchOutlinedIcon from "@material-ui/icons/SearchOutlined"
 
 import LinkComponent from "src/components/LinkComponent/LinkComponent"
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
+  chip: {
+    color: theme.palette.text.primary,
+    fontWeight: 500,
+    backgroundColor: theme.palette.background.paper,
+  },
+  icon: {
+    color: theme.palette.text.primary,
+  },
   appBar: {
     backgroundColor: theme.palette.background.default,
   },
@@ -48,7 +65,6 @@ const useStyles = makeStyles(theme => ({
     },
   },
   autoComplete: {
-    // borderColor: theme.palette.text.primary,
     padding: theme.spacing(1, 1, 1, 7),
     transition: theme.transitions.create("width"),
     width: "100%",
@@ -82,14 +98,22 @@ function Scroll(props) {
 
 const UpperNavigation = ({ props }) => {
   const classes = useStyles()
-  const [anchorEl, setAnchorEl] = React.useState(null)
+  const [anchorEl, setAnchorEl] = useState(null)
+  const [status, setStatus] = useState("Available")
 
-  const handleClick = event => {
+  const handleClick = (event) => {
     setAnchorEl(event.currentTarget)
+  }
+  const handleChange = (event) => {
+    setStatus(event.target.value)
   }
 
   const handleClose = () => {
     setAnchorEl(null)
+  }
+
+  const handleDelete = () => {
+    console.info("You clicked the delete icon.")
   }
 
   const open = Boolean(anchorEl)
@@ -103,21 +127,48 @@ const UpperNavigation = ({ props }) => {
               edge="start"
               color="inherit"
               aria-label="search"
-              onClick={handleClick}
+              onClick={() => navigate("/app/")}
             >
               <SearchOutlinedIcon />
             </IconButton>
             <div className={classes.grow} />
-            <Typography
-              onClick={() => navigate("/")}
-              className={classes.title}
-              variant="h6"
-              color="textPrimary"
-              noWrap
-            >
-              Entroprise
-            </Typography>
+            <Chip
+              className={classes.chip}
+              avatar={
+                <Avatar src="https://www.marinij.com/wp-content/uploads/2019/09/MIJ-L-HUFFMAN-0907-08.jpg?w=620" />
+              }
+              label={
+                <FormControl className={classes.formControl}>
+                  <Select
+                    disableUnderline
+                    id="select"
+                    value={status}
+                    onChange={handleChange}
+                    renderValue={(selected) => (
+                      <Typography variant="caption">{selected}</Typography>
+                    )}
+                  >
+                    <MenuItem value={"Available"}>Available</MenuItem>
+                    <MenuItem value={"Busy"}>Busy</MenuItem>
+                    <MenuItem value={"Away From Keyboard"}>
+                      Away From Keyboard
+                    </MenuItem>
+                    <MenuItem value={"Offline"}>Offline</MenuItem>
+                  </Select>
+                </FormControl>
+              }
+              clickable
+              variant="outlined"
+            />
+
             <div className={classes.grow} />
+            {/* <IconButton
+              color="inherit"
+              aria-label="tensorflow"
+              onClick={() => navigate("/app/tensorflow")}
+            >
+              <FaceOutlinedIcon />
+            </IconButton> */}
             <IconButton
               onClick={() => navigate("/app/account")}
               aria-label="delete"

@@ -9,10 +9,24 @@ module.exports = {
     author: `Peter Arnold`,
   },
   plugins: [
+    `gatsby-plugin-react-native-web`,
     "gatsby-plugin-root-import",
     `gatsby-plugin-react-helmet`,
     `gatsby-transformer-sharp`,
     `gatsby-plugin-sharp`,
+    {
+      resolve: `gatsby-plugin-firebase-messaging`,
+      options: {
+        config: {
+          apiKey: process.env._F_APIKEY,
+          appId: process.env._F_APPID,
+          messagingSenderId: process.env._F_MESSAGINGSENDERID,
+          projectId: process.env._F_PROJECTID,
+        },
+        // disableDevelopment: true,
+        // removeFirebaseServiceWorker: true,
+      },
+    },
     {
       resolve: "gatsby-plugin-firebase",
       options: {
@@ -65,8 +79,8 @@ module.exports = {
         description: `Entroprise`,
         start_url: `/`,
         background_color: `#fff`,
-        theme_color: `#219a49`,
-        display: `minimal-ui`,
+        theme_color: `#fff`,
+        display: `standalone`,
         icon: `src/images/logo.png`,
       },
     },
