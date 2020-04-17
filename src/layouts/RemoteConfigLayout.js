@@ -1,35 +1,19 @@
-import React, { useEffect, useState, useMemo } from "react"
-import firebase from "gatsby-plugin-firebase"
+import React, { useState, useMemo } from "react"
+import { observer } from "mobx-react-lite"
+import { fetchAndActivate } from "src/services/remoteConfig"
 
 const RemoteConfigLayout = ({ children }) => {
   const [currentConfig, setCurrentConfig] = useState(null)
 
-  const remoteConfig = firebase.remoteConfig()
-  remoteConfig.settings = {
-    minimumFetchIntervalMillis: 3600000,
-  }
-
-  remoteConfig.defaultConfig = {
-    loot_enabled: false,
-  }
-
-  useMemo(() => {
-    remoteConfig
-      .fetchAndActivate()
-      .then(() => {
-        console.log("currentConfig", currentConfig)
-        const newConfig = remoteConfig.getAll()
-        console.log("newConfig", newConfig)
-        setCurrentConfig(newConfig)
-      })
-      .catch((err) => {
-        console.error(err)
-      })
-  }, [remoteConfig])
+  useMemo(async () => {
+    const newConfig = await fetchAndActivate()
+    setCurrentConfig(newConfig)
+    console.log("AnalyticsLayout: fetchAndActivate")
+  }, [])
 
   return (
     <>
-      {console.log("currentConfig", currentConfig)}
+      {console.log("remoteConfig", currentConfig)}
       {children}
     </>
   )

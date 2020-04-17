@@ -1,9 +1,11 @@
-import React, { useEffect, useState, useMemo } from "react"
-import firebase from "gatsby-plugin-firebase"
+import React, { useMemo } from "react"
+import { login } from "src/services/analytics"
 
 const AnalyticsLayout = ({ children }) => {
-  const [loot, setLoot] = useState(null)
-  const analytics = firebase.analytics()
+  useMemo(() => {
+    login()
+    console.log("AnalyticsLayout: login")
+  }, [])
 
   return <>{children}</>
 }
