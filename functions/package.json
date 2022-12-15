@@ -15,7 +15,7 @@
     "firebase-admin": "^8.6.0",
     "firebase-functions": "^3.3.0",
     "twilio": "^3.42.0",
-    "twilio-chat": "^3.3.4"
+    "twilio-chat": "^6.0.0"
   },
   "devDependencies": {
     "firebase-functions-test": "^0.1.6"
